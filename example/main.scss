@@ -1,0 +1,10 @@
+@import "sub";
+@import "package:bootstrap_sass/scss/variables";
+
+.a {
+  color: blue;
+}
+
+.c {
+  color: $body-color;
+}

@@ -1,0 +1,30 @@
+# sass_builder
+
+Transpile sass files using the "build" package.
+
+## Usage
+
+1. create `pubspec.yaml` containing next code:
+
+```yaml
+dependencies:
+    bootstrap_sass: any # this dependency is only for demo purpose
+dev_dependencies:
+    sass_builder: 0.0.1 # change it for latest version
+```
+
+1. create `web/main.scss` file and add next code:
+
+{@example example/main.scss}
+
+2. create `web/_sub.scss` file and add next code:
+
+{@example example/_sub.scss}
+
+3. create `tool/build.dart` file and add next code:
+
+{@example tool/build.dart}
+
+4. run `tool/build.dart` and the file `web/main.css` will be generated containing next code:
+
+{@example example/main.css}
