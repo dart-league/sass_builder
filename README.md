@@ -13,7 +13,7 @@ dev_dependencies:
     sass_builder: 0.0.1 # change it for latest version
 ```
 
-1. create `web/main.scss` file and add next code:
+1\. create `web/main.scss` file and add next code:
 
 ```scss
 @import "sub";
@@ -28,7 +28,7 @@ dev_dependencies:
 }
 ```
 
-2. create `web/_sub.scss` file and add next code:
+2\. create `web/_sub.scss` file and add next code:
 
 ```scss
 .b {
@@ -36,7 +36,7 @@ dev_dependencies:
 }
 ```
 
-3. create `tool/build.dart` file and add next code:
+3\. create `tool/build.dart` file and add next code:
 
 ```dart
 import 'dart:async';
@@ -49,7 +49,20 @@ Future main() async {
 }
 ```
 
-4. run `tool/build.dart` and the file `web/main.css` will be generated containing next code:
+you can also create `tool/watch.dart` file and add next code:
+
+```dart
+import 'dart:async';
+
+import 'package:build_runner/build_runner.dart';
+import 'package:sass_builder/phase.dart';
+
+Future main() async {
+  await watch(new PhaseGroup()..addPhase(sassPhase), deleteFilesByDefault: true);
+}
+```
+
+4\. run either `tool/build.dart` or `tool/watch.dart` and then the file `web/main.css` will be generated containing next code:
 
 ```css
 .b {

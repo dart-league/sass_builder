@@ -13,18 +13,22 @@ dev_dependencies:
     sass_builder: 0.0.1 # change it for latest version
 ```
 
-1. create `web/main.scss` file and add next code:
+1\. create `web/main.scss` file and add next code:
 
 {@example example/main.scss}
 
-2. create `web/_sub.scss` file and add next code:
+2\. create `web/_sub.scss` file and add next code:
 
 {@example example/_sub.scss}
 
-3. create `tool/build.dart` file and add next code:
+3\. create `tool/build.dart` file and add next code:
 
 {@example tool/build.dart}
 
-4. run `tool/build.dart` and the file `web/main.css` will be generated containing next code:
+you can also create `tool/watch.dart` file and add next code:
+
+{@example tool/watch.dart}
+
+4\. run either `tool/build.dart` or `tool/watch.dart` and then the file `web/main.css` will be generated containing next code:
 
 {@example example/main.css}
