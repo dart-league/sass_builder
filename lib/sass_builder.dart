@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'package:build/build.dart';
 import 'package:logging/logging.dart';
 import 'package:package_resolver/package_resolver.dart';
