@@ -1,3 +1,7 @@
+## 0.1.1
+
+- add missing import
+
 ## 0.1.0
 
 - upgrade build to `^0.9.1` and build_runner to `^0.3.2`
