@@ -16,14 +16,26 @@ class SassBuilder implements Builder {
   Set<AssetId> get mainInputs {
     if (_mainInputs == null) {
       var sassBuildFile = new File(join(Directory.current.path, '.dart_tool', 'sass_build_main_inputs.json'));
+      _log.info('reading main_inputs file: ${sassBuildFile}');
       if (sassBuildFile.existsSync()) {
         var mainInputsJson = sassBuildFile.readAsStringSync();
         mainInputsJson = mainInputsJson.isEmpty ? '[]' : mainInputsJson;
         List mainInputsList = JSON.decode(mainInputsJson);
         mainInputsList = mainInputsList == null || mainInputsList.isEmpty ? [] : mainInputsList;
         _mainInputs = new Set();
-        for (var mainInputStr in mainInputsList) {
-          _mainInputs.add(new AssetId.parse(mainInputStr));
+        var rewriteInputs = false;
+        for (var mainInputAssetIdName in mainInputsList) {
+          var mainInputAssetId = new AssetId.parse(mainInputAssetIdName);
+          if (new File(mainInputAssetId.path).existsSync()) {
+            _log.info('adding mainInputFile: ${mainInputAssetId}');
+            _mainInputs.add(mainInputAssetId);
+          } else {
+            rewriteInputs = true;
+          }
+        }
+        if (rewriteInputs) {
+          _log.info('rewriting inputs');
+          _saveMainInputs();
         }
       } else {
         _mainInputs = new Set();
@@ -56,7 +68,7 @@ class SassBuilder implements Builder {
     if (mainInputs.isNotEmpty) {
       for (var mainInput in mainInputs) {
         _log.info('parsing: ${mainInput}');
-        var css = await render(mainInput.path, packageResolver: await PackageResolver.current.asSync);
+        var css = await compile(mainInput.path, packageResolver: await PackageResolver.current.asSync);
 //        buildStep.writeAsString(_changeExtension(mainInput), css);
         var file = new File(mainInput.changeExtension('.css').path);
         file.createSync(recursive: true);

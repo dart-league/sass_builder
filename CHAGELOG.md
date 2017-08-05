@@ -1,3 +1,7 @@
+## 0.1.2
+
+- fix #2  Keep trying to build removed scss
+
 ## 0.1.1
 
 - add missing import
