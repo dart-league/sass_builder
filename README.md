@@ -45,7 +45,7 @@ import 'package:build_runner/build_runner.dart';
 import 'package:sass_builder/phase.dart';
 
 Future main() async {
-  await build(new PhaseGroup()..addPhase(sassPhase));
+  await build([sassBuildAction]);
 }
 ```
 
@@ -58,7 +58,7 @@ import 'package:build_runner/build_runner.dart';
 import 'package:sass_builder/phase.dart';
 
 Future main() async {
-  await watch(new PhaseGroup()..addPhase(sassPhase));
+  await watch([sassBuildAction], deleteFilesByDefault: true);
 }
 ```
 
