@@ -66,21 +66,29 @@ class SassBuilder implements Builder {
     _log.info('using mainInputs: $mainInputs');
 
     if (mainInputs.isNotEmpty) {
+      var mainInputsToRemove = new Set();
       for (var mainInput in mainInputs) {
         _log.info('parsing: ${mainInput}');
+        if (!new File(mainInput.path).existsSync()) {
+          _log.info('adding mainInput to remove: $mainInput');
+          mainInputsToRemove.add(mainInput);
+          continue;
+        }
         var css = await compile(mainInput.path, packageResolver: await PackageResolver.current.asSync);
 //        buildStep.writeAsString(_changeExtension(mainInput), css);
-        var file = new File(mainInput.changeExtension('.css').path);
+        var file = new File(mainInput
+            .changeExtension('.css')
+            .path);
         file.createSync(recursive: true);
         file.writeAsString(css);
       }
+
+      _log.info('removing mainInputs non existing');
+      mainInputs.removeAll(mainInputsToRemove);
     }
   }
 
   @override
-  Map<String,List<String>> get buildExtensions =>
-    {
-
-    '': const ['.xxxxx']  // since we are writing files without buildStep, we need to have a fake extension
-  };
+  Map<String, List<String>> get buildExtensions =>
+      {'': const ['.css']}; // since we are writing files without buildStep, we need to have a fake extension
 }

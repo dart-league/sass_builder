@@ -3,5 +3,8 @@ import 'package:sass_builder/sass_builder.dart';
 
 var _graph = new PackageGraph.forThisPackage();
 
-Phase get sassPhase => new Phase()..addAction(
-    new SassBuilder(), new InputSet(_graph.root.name, ['**/*.scss', '**/*.sass']));
+BuildAction get sassBuildAction =>
+    new BuildAction(
+        new SassBuilder(),
+        _graph.root.name,
+        inputs: ['**/*.scss', '**/*.sass']);
