@@ -1,5 +1,4 @@
 import 'package:build/build.dart';
-import 'package:build_barback/build_barback.dart';
 import 'package:build_test/build_test.dart';
 import 'package:sass_builder/sass_builder.dart';
 import 'package:test/test.dart';
@@ -30,14 +29,11 @@ void main() {
 
       reader.cacheStringAsset(primary, inputs[primary]);
 
-      await runBuilder(builder, inputs.keys, reader, writer, const BarbackResolvers());
+      await runBuilder(builder, inputs.keys, reader, writer, null);
 
-      expect(writer.assets.length, equals(1));
-      expect(writer.assets, contains(primary.changeExtension('.css')));
-
-      expect(reader.assets.length, equals(1));
-      expect(reader.assetsRead, contains(primary));
-     });
+      expect(writer.assets.keys, equals([primary.changeExtension('.css')]));
+      expect(reader.assetsRead, equals([primary]));
+    });
 
     test('one relative partial import', () async {
       var primary = makeAssetId('a|lib/styles.scss');
@@ -50,14 +46,10 @@ void main() {
       reader.cacheStringAsset(primary, inputs[primary]);
       reader.cacheStringAsset(import, inputs[import]);
 
-      await runBuilder(builder, inputs.keys, reader, writer, const BarbackResolvers());
+      await runBuilder(builder, inputs.keys, reader, writer, null);
 
-      expect(writer.assets.length, equals(1));
-      expect(writer.assets, contains(primary.changeExtension('.css')));
-
-      expect(reader.assets.length, equals(2));
-      expect(reader.assetsRead, contains(primary));
-      expect(reader.assetsRead, contains(import));
+      expect(writer.assets.keys, equals([primary.changeExtension('.css')]));
+      expect(reader.assetsRead, unorderedEquals([primary, import]));
     });
 
     test('one relative partial import simplified name', () async {
@@ -71,12 +63,10 @@ void main() {
       reader.cacheStringAsset(primary, inputs[primary]);
       reader.cacheStringAsset(import, inputs[import]);
 
-      await runBuilder(builder, inputs.keys, reader, writer, const BarbackResolvers());
+      await runBuilder(builder, inputs.keys, reader, writer, null);
 
-      expect(writer.assets.length, equals(1));
-      expect(writer.assets, contains(primary.changeExtension('.css')));
+      expect(writer.assets.keys, equals([primary.changeExtension('.css')]));
 
-      expect(reader.assets.length, equals(2));
       expect(reader.assetsRead, contains(primary));
       expect(reader.assetsRead, contains(import));
     });
@@ -92,15 +82,15 @@ void main() {
       reader.cacheStringAsset(primary, inputs[primary]);
       reader.cacheStringAsset(import, inputs[import]);
 
-      await runBuilder(builder, inputs.keys, reader, writer, const BarbackResolvers());
+      await runBuilder(builder, inputs.keys, reader, writer, null);
 
-      expect(writer.assets.length, equals(2));
-      expect(writer.assets, contains(primary.changeExtension('.css')));
-      expect(writer.assets, contains(import.changeExtension('.css')));
-
-      expect(reader.assets.length, equals(2));
-      expect(reader.assetsRead, contains(primary));
-      expect(reader.assetsRead, contains(import));
+      expect(
+          writer.assets.keys,
+          unorderedEquals([
+            primary.changeExtension('.css'),
+            import.changeExtension('.css')
+          ]));
+      expect(reader.assetsRead, unorderedEquals([primary, import]));
     });
 
     test('one package import', () async {
@@ -114,12 +104,10 @@ void main() {
       reader.cacheStringAsset(primary, inputs[primary]);
       reader.cacheStringAsset(import, inputs[import]);
 
-      await runBuilder(builder, inputs.keys, reader, writer, const BarbackResolvers());
+      await runBuilder(builder, inputs.keys, reader, writer, null);
 
-      expect(writer.assets.length, equals(1));
-      expect(writer.assets, contains(primary.changeExtension('.css')));
+      expect(writer.assets.keys, equals([primary.changeExtension('.css')]));
 
-      expect(reader.assets.length, equals(2));
       expect(reader.assetsRead, contains(primary));
       expect(reader.assetsRead, contains(import));
     });
@@ -130,7 +118,7 @@ void main() {
       var import2 = makeAssetId('a|lib/_more_styles.scss');
       var inputs = {
         primary: '''@import 'package:b/more_styles','''
-                 '''        'more_styles';''',
+            '''        'more_styles';''',
         import1: '''/* no imports */''',
         import2: '''/* no imports */''',
       };
@@ -139,13 +127,15 @@ void main() {
       reader.cacheStringAsset(import1, inputs[import1]);
       reader.cacheStringAsset(import2, inputs[import2]);
 
-      await runBuilder(builder, inputs.keys, reader, writer, const BarbackResolvers());
+      await runBuilder(builder, inputs.keys, reader, writer, null);
 
-      expect(writer.assets.length, equals(2));
-      expect(writer.assets, contains(primary.changeExtension('.css')));
-      expect(writer.assets, contains(import1.changeExtension('.css')));
+      expect(
+          writer.assets.keys,
+          unorderedEquals([
+            primary.changeExtension('.css'),
+            import1.changeExtension('.css')
+          ]));
 
-      expect(reader.assets.length, equals(3));
       expect(reader.assetsRead, contains(primary));
       expect(reader.assetsRead, contains(import1));
       expect(reader.assetsRead, contains(import2));
@@ -157,7 +147,7 @@ void main() {
       var import2 = makeAssetId('a|lib/_more_styles.scss');
       var inputs = {
         primary: '''@import 'package:b/more_styles';'''
-                 '''@import 'more_styles';''',
+            '''@import 'more_styles';''',
         import1: '''/* no imports */''',
         import2: '''/* no imports */''',
       };
@@ -166,13 +156,15 @@ void main() {
       reader.cacheStringAsset(import1, inputs[import1]);
       reader.cacheStringAsset(import2, inputs[import2]);
 
-      await runBuilder(builder, inputs.keys, reader, writer, const BarbackResolvers());
+      await runBuilder(builder, inputs.keys, reader, writer, null);
 
-      expect(writer.assets.length, equals(2));
-      expect(writer.assets, contains(primary.changeExtension('.css')));
-      expect(writer.assets, contains(import1.changeExtension('.css')));
+      expect(
+          writer.assets.keys,
+          unorderedEquals([
+            primary.changeExtension('.css'),
+            import1.changeExtension('.css')
+          ]));
 
-      expect(reader.assets.length, equals(3));
       expect(reader.assetsRead, contains(primary));
       expect(reader.assetsRead, contains(import1));
       expect(reader.assetsRead, contains(import2));
@@ -192,13 +184,15 @@ void main() {
       reader.cacheStringAsset(import1, inputs[import1]);
       reader.cacheStringAsset(import2, inputs[import2]);
 
-      await runBuilder(builder, inputs.keys, reader, writer, const BarbackResolvers());
+      await runBuilder(builder, inputs.keys, reader, writer, null);
 
-      expect(writer.assets.length, equals(2));
-      expect(writer.assets, contains(primary.changeExtension('.css')));
-      expect(writer.assets, contains(import1.changeExtension('.css')));
+      expect(
+          writer.assets.keys,
+          unorderedEquals([
+            primary.changeExtension('.css'),
+            import1.changeExtension('.css')
+          ]));
 
-      expect(reader.assets.length, equals(3));
       expect(reader.assetsRead, contains(primary));
       expect(reader.assetsRead, contains(import1));
       expect(reader.assetsRead, contains(import2));

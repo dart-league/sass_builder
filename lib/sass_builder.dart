@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:collection';
 
-import 'package:barback/barback.dart' show BarbackSettings;
 import 'package:build/build.dart';
 import 'package:logging/logging.dart';
 import 'package:package_resolver/package_resolver.dart';
@@ -9,7 +8,6 @@ import 'package:path/path.dart';
 import 'package:sass/sass.dart';
 import 'package:scratch_space/scratch_space.dart';
 
-final outputExtensionKey = 'outputExtension';
 final _packageNameRegExp = new RegExp(r'''package:([^\/]*)\/''');
 final _packagePathRegExp = new RegExp(r'''package:[^\/]*\/(.*)''');
 final _importBlockRegExp = new RegExp(r'''@import ([^;]*);''', multiLine: true);
@@ -29,14 +27,8 @@ class SassBuilder implements Builder {
           () => new ScratchSpace(),
       dispose: (temp) => temp.delete());
 
-  SassBuilder({BarbackSettings settings}) {
-    if (settings != null) {
-      _outputExtension = settings.configuration.containsKey(outputExtensionKey)
-          ? settings.configuration[outputExtensionKey]
-          : '.css';
-    } else {
-      _outputExtension = '.css';
-    }
+  SassBuilder({String outputExtension: '.css'}) {
+    _outputExtension =  outputExtension;
   }
 
   @override
@@ -51,8 +43,7 @@ class SassBuilder implements Builder {
 
     // Read and copy this asset and all imported assets to the temp directory.
     _log.fine('processing file: ${inputId}');
-    var tempDir =
-        await buildStep.fetchResource<ScratchSpace>(_scratchSpaceResource);
+    var tempDir = await buildStep.fetchResource(_scratchSpaceResource);
     await _readAndCopyImports(inputId, buildStep, tempDir);
 
     // Compile the css.
@@ -79,20 +70,24 @@ class SassBuilder implements Builder {
   // `tempDir`.
   Future _readAndCopyImports(
       AssetId id, BuildStep buildStep, ScratchSpace tempDir) async {
+    var copiedAssets = new Set<AssetId>();
     var assetsToCopy = new Queue<AssetId>();
     assetsToCopy.add(id);
 
     while (assetsToCopy.isNotEmpty) {
       id = assetsToCopy.removeFirst();
 
-      var contents = await buildStep.readAsString(id);
-      _log.fine('read file: ${id}');
-      await tempDir.ensureAssets([id], buildStep);
+      if (!copiedAssets.contains(id)) {
+        var contents = await buildStep.readAsString(id);
+        _log.fine('read file: ${id}');
+        await tempDir.ensureAssets([id], buildStep);
+        copiedAssets.add(id);
 
-      var imports = await _importedAssets(id, contents, buildStep);
-      assetsToCopy.addAll(imports);
-      var importLog = imports.fold('', (acc, import) => '$acc\n  ${import}');
-      _log.fine('found imports:$importLog');
+        var imports = await _importedAssets(id, contents, buildStep);
+        assetsToCopy.addAll(imports);
+        var importLog = imports.fold('', (acc, import) => '$acc\n  ${import}');
+        _log.fine('found imports:$importLog');
+      }
     }
   }
 
@@ -108,18 +103,18 @@ class SassBuilder implements Builder {
         var importId = new AssetId(_importPackage(import.group(1), id.package),
             _importPath(import.group(1), id.path));
 
-        if (!await (buildStep.canRead(importId))) {
+        if (!await buildStep.canRead(importId)) {
           // Try same asset path except filename starting with an underscore.
           _log.fine('could not read file: ${importId}');
           importId = new AssetId(importId.package,
               join(dirname(importId.path), '_${basename(importId.path)}'));
-        }
 
-        if (!await buildStep.canRead(importId)) {
-          // Only copy imports that are found. If there is a problem with a
-          // missing file, let sass compilation fail and report it.
-          _log.severe('could not read file: ${importId}');
-          continue;
+          if (!await buildStep.canRead(importId)) {
+            // Only copy imports that are found. If there is a problem with a
+            // missing file, let sass compilation fail and report it.
+            _log.severe('could not read file: ${importId}');
+            continue;
+          }
         }
 
         importedAssets.add(importId);

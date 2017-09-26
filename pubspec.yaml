@@ -8,6 +8,7 @@ environment:
 dependencies:
   sass: ^1.0.0-beta.2
   build: ^0.10.1
+  build_barback: ^0.4.0+1
   build_runner: ^0.4.0
   logging: ^0.11.3
   package_resolver: ^1.0.2
@@ -17,5 +18,3 @@ dev_dependencies:
   bootstrap_sass: 4.0.0-alpha.5+1
   build_test: ^0.8.0
   test: ^0.12.0
-#  bootstrap_sass:
-#    path: ../bootstrap_sass
