@@ -37,7 +37,7 @@ class SassBuilder implements Builder {
 
     if (basename(inputId.path).startsWith('_')) {
       // Do not produce any output for .scss partials.
-      _log.fine('skipping parial file: ${inputId}');
+      _log.fine('skipping partial file: ${inputId}');
       return;
     }
 

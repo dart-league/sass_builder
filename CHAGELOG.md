@@ -1,3 +1,7 @@
+## 1.0.0
+
+- write assets to temporary directory
+
 ## 0.2.0
 
 - upgrade `build_runner` to version `^0.4.0`
