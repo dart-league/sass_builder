@@ -1,19 +1,23 @@
 # sass_builder
 
-Transpile sass files using the "build" package.
+Transpile sass files using the [build][1] package and the dart implementation
+of [sass][2].
+
+[1]: https://github.com/dart-lang/build
+[2]: https://github.com/sass/dart-sass
 
 ## Usage
 
-1. create `pubspec.yaml` containing next code:
+1\. Create a `pubspec.yaml` file containing the following code:
 
 ```yaml
 dependencies:
-    bootstrap_sass: any # this dependency is only for demo purpose
+    bootstrap_sass: any # this dependency is only for demo purposes
 dev_dependencies:
-    sass_builder: 0.0.1 # change it for latest version
+    sass_builder: ^1.0.0 # update for the latest version
 ```
 
-1\. create `web/main.scss` file and add next code:
+2\. Create `web/main.scss` containing the following code:
 
 ```scss
 @import "sub";
@@ -28,7 +32,7 @@ dev_dependencies:
 }
 ```
 
-2\. create `web/_sub.scss` file and add next code:
+3\. Create `web/_sub.scss` containing the following code:
 
 ```scss
 .b {
@@ -36,7 +40,7 @@ dev_dependencies:
 }
 ```
 
-3\. create `tool/build.dart` file and add next code:
+4\. Create `tool/build.dart` containing the following code:
 
 ```dart
 import 'dart:async';
@@ -49,7 +53,7 @@ Future main() async {
 }
 ```
 
-you can also create `tool/watch.dart` file and add next code:
+You can also create `tool/watch.dart` with the following code:
 
 ```dart
 import 'dart:async';
@@ -62,7 +66,8 @@ Future main() async {
 }
 ```
 
-4\. run either `tool/build.dart` or `tool/watch.dart` and then the file `web/main.css` will be generated containing next code:
+5\. Run either `tool/build.dart` or `tool/watch.dart` and the file `web/main.css`
+will be generated containing:
 
 ```css
 .b {
@@ -77,4 +82,26 @@ Future main() async {
   color: #373a3c;
 }
 
+```
+
+## Wrapped as a Pub Transformer
+
+To automatically generate .css files when you run `pub build` or `pub serve`
+you can add sass_builder as a transformer in your package.
+
+In your `pubspec.yaml` add the following code:
+
+```yaml
+dependencies:
+  sass_builder ^1.0.0 # update for the latest version
+transformers:
+- sass_builder
+```
+
+By default this will generate .css files for every non-partial .scss file in your project. You can customize the extension of the generated files with the `outputExtension` option:
+
+```yaml
+transformers:
+- sass_builder:
+    outputExtension: .scss.css
 ```
