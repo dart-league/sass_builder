@@ -24,11 +24,11 @@ class SassBuilder implements Builder {
   Logger _log = new Logger('SassBuilder');
   String _outputExtension;
   static final _scratchSpaceResource = new Resource<ScratchSpace>(
-          () => new ScratchSpace(),
+      () => new ScratchSpace(),
       dispose: (temp) => temp.delete());
 
   SassBuilder({String outputExtension: '.css'}) {
-    _outputExtension =  outputExtension;
+    _outputExtension = outputExtension;
   }
 
   @override
