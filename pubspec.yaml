@@ -6,15 +6,15 @@ description: Transpile sass files using the "build" package.
 environment:
   sdk: '>=1.8.0 <2.0.0'
 dependencies:
-  sass: ^1.0.0-beta.2
+  barback: ^0.15.2
   build: ^0.10.2+1
   build_barback: ^0.4.0+1
   build_runner: '>=0.4.0 <0.6.0'
   logging: ^0.11.3
   package_resolver: ^1.0.2
   path: ^1.4.1
+  sass: ^1.0.0-beta.2
   scratch_space: ^0.0.1
-  barback: ^0.15.2
 dev_dependencies:
   bootstrap_sass: 4.0.0-alpha.5+1
   build_test: ^0.8.0
