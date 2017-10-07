@@ -13,7 +13,7 @@ class SassBuilderTransform extends BuilderTransformer {
   factory SassBuilderTransform.asPlugin(BarbackSettings settings) {
     if (settings.configuration.containsKey(_outputExtensionKey)) {
       return new SassBuilderTransform.customExtension(
-          settings.configuration[_outputExtensionKey]);
+          settings.configuration[_outputExtensionKey] as String);
     }
     return new SassBuilderTransform();
   }
