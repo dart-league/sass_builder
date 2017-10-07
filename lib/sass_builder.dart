@@ -25,7 +25,7 @@ class SassBuilder implements Builder {
           () => new ScratchSpace(),
       dispose: (temp) => temp.delete());
 
-  final _log = new Logger('SassBuilder');
+  final _log = new Logger('sass_builder');
   final String _outputExtension;
 
   SassBuilder({String outputExtension: '.css'})
