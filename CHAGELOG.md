@@ -1,8 +1,8 @@
 ## 1.0.1
 
 - Support the latest version of `package:build_runner`.
-
 - Align the logger name with the package name: `sass_builder`.
+- upgrade to `build` to `^0.10.2+1`
 
 ## 1.0.0
 

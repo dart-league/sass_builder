@@ -51,6 +51,7 @@ import 'package:sass_builder/phase.dart';
 Future main() async {
   await build([sassBuildAction]);
 }
+
 ```
 
 You can also create `tool/watch.dart` with the following code:
@@ -62,12 +63,13 @@ import 'package:build_runner/build_runner.dart';
 import 'package:sass_builder/phase.dart';
 
 Future main() async {
-  await watch([sassBuildAction], deleteFilesByDefault: true);
+  await watch([sassBuildAction], deleteFilesByDefault: true).drain();
 }
+
 ```
 
 5\. Run either `tool/build.dart` or `tool/watch.dart` and the file `web/main.css`
-will be generated containing:
+    will be generated containing:
 
 ```css
 .b {
