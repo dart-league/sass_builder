@@ -21,15 +21,15 @@ final _sassCommentRegExp =
 /// `Assets` to a temporary directory with a structure similar to that defined
 /// in `.packages`. Sass will read from the temporary directory when compiling.
 class SassBuilder implements Builder {
-  Logger _log = new Logger('SassBuilder');
-  String _outputExtension;
   static final _scratchSpaceResource = new Resource<ScratchSpace>(
           () => new ScratchSpace(),
       dispose: (temp) => temp.delete());
 
-  SassBuilder({String outputExtension: '.css'}) {
-    _outputExtension =  outputExtension;
-  }
+  final _log = new Logger('sass_builder');
+  final String _outputExtension;
+
+  SassBuilder({String outputExtension: '.css'})
+      : this._outputExtension = outputExtension;
 
   @override
   Future build(BuildStep buildStep) async {
