@@ -49,7 +49,7 @@ import 'package:build_runner/build_runner.dart';
 import 'package:sass_builder/phase.dart';
 
 Future main() async {
-  await build([sassBuildAction]);
+  await build([sassBuildAction], deleteFilesByDefault: true);
 }
 
 ```
@@ -63,7 +63,7 @@ import 'package:build_runner/build_runner.dart';
 import 'package:sass_builder/phase.dart';
 
 Future main() async {
-  await watch([sassBuildAction], deleteFilesByDefault: true).drain();
+  await watch([sassBuildAction], deleteFilesByDefault: true);
 }
 
 ```
