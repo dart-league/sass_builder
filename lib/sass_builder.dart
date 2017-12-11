@@ -10,9 +10,12 @@ import 'package:scratch_space/scratch_space.dart';
 
 final _packageNameRegExp = new RegExp(r'''package:([^\/]*)\/''');
 final _packagePathRegExp = new RegExp(r'''package:[^\/]*\/(.*)''');
-final _importBlockRegExp = new RegExp(r'''@import ([^;]*);''', multiLine: true);
-final _fileNameRegExp = new RegExp(r'''(?:\'|\")([^\'\"]*)(?:\'|\")''');
-final _sassCommentRegExp =
+final _scssImportBlockRegExp =
+    new RegExp(r'''@import ([^;]*);''', multiLine: true);
+final _sassImportBlockRegExp = new RegExp(r'''@import (.*)$''');
+final _scssfileNameRegExp = new RegExp(r'''(?:\'|\")([^\'\"]*)(?:\'|\")''');
+final _sassfileNameRegExp = new RegExp(r'''['"]?([^ ,'"]+)['"]?''');
+final _scssCommentRegExp =
     new RegExp(r'''//.*?\n|/\*.*?\*/''', multiLine: true);
 
 /// A `Builder` to compile .css files from .scss source using dart-sass.
@@ -22,7 +25,7 @@ final _sassCommentRegExp =
 /// in `.packages`. Sass will read from the temporary directory when compiling.
 class SassBuilder implements Builder {
   static final _scratchSpaceResource = new Resource<ScratchSpace>(
-          () => new ScratchSpace(),
+      () => new ScratchSpace(),
       dispose: (temp) => temp.delete());
 
   final _log = new Logger('sass_builder');
@@ -96,25 +99,25 @@ class SassBuilder implements Builder {
       AssetId id, String contents, BuildStep buildStep) async {
     var importedAssets = new Set<AssetId>();
 
-    for (var importBlock in _importBlockRegExp
-        .allMatches(contents.replaceAll(_sassCommentRegExp, ''))) {
-      var imports = _fileNameRegExp.allMatches(importBlock.group(1));
+    var importBlocks = id.extension == '.scss'
+        ? _scssImportBlockRegExp
+            .allMatches(contents.replaceAll(_scssCommentRegExp, ''))
+        : _sassImportBlockRegExp.allMatches(contents);
+
+    for (var importBlock in importBlocks) {
+      var imports = id.extension == '.scss'
+          ? _scssfileNameRegExp.allMatches(importBlock.group(1))
+          : _sassfileNameRegExp.allMatches(importBlock.group(1));
       for (var import in imports) {
-        var importId = new AssetId(_importPackage(import.group(1), id.package),
-            _importPath(import.group(1), id.path));
-
-        if (!await buildStep.canRead(importId)) {
-          // Try same asset path except filename starting with an underscore.
-          _log.fine('could not read file: ${importId}');
-          importId = new AssetId(importId.package,
-              join(dirname(importId.path), '_${basename(importId.path)}'));
-
-          if (!await buildStep.canRead(importId)) {
-            // Only copy imports that are found. If there is a problem with a
-            // missing file, let sass compilation fail and report it.
-            _log.severe('could not read file: ${importId}');
-            continue;
-          }
+        var importId = await _findImport(
+            _importPackage(import.group(1), id.package),
+            _importPath(import.group(1), id.path),
+            buildStep);
+        if (importId == null) {
+          // Only copy imports that are found. If there is a problem with a
+          // missing file, let sass compilation fail and report it.
+          _log.severe('could not read file: ${importId}');
+          continue;
         }
 
         importedAssets.add(importId);
@@ -133,11 +136,58 @@ class SassBuilder implements Builder {
 
   // Returns the path parsed from the given `import` or defaults to
   // locating the file in the `currentPath`.
-  String _importPath(String import, String currentPath) {
-    var path = import.startsWith('package:')
-        ? join('lib', _packagePathRegExp.firstMatch(import).group(1))
-        : join(dirname(currentPath), import);
+  String _importPath(String import, String currentPath) =>
+      import.startsWith('package:')
+          ? join('lib', _packagePathRegExp.firstMatch(import).group(1))
+          : join(dirname(currentPath), import);
 
-    return path.endsWith('.scss') ? path : '$path.scss';
+  // Locates the asset for `path` in `package` or returns null if unreadable.
+  //
+  // Probes for different versions of the path in case the file is a parial
+  // (leading underscore can be ommited) or if the extension is ommited per the
+  // SASS `@import` syntax. Tests for file readability via `buildStep`.
+  Future<AssetId> _findImport(
+      String package, String path, BuildStep buildStep) async {
+    var importId = new AssetId(package, path);
+
+    if (await buildStep.canRead(importId)) {
+      // File was found as written in the import.
+      return importId;
+    }
+
+    // Try as a patial.
+    var partialFile = new AssetId(package, _asPartial(path));
+    if (await buildStep.canRead(partialFile)) {
+      return partialFile;
+    }
+
+    // Try adding the .scss extension.
+    var scssPath = '$path.scss';
+    var scssFile = new AssetId(package, scssPath);
+    if (await buildStep.canRead(scssFile)) {
+      return scssFile;
+    }
+
+    partialFile = new AssetId(package, _asPartial(scssPath));
+    if (await buildStep.canRead(partialFile)) {
+      return partialFile;
+    }
+
+    // Try adding the .sass extension
+    var sassPath = '$path.sass';
+    var sassFile = new AssetId(package, sassPath);
+    if (await buildStep.canRead(sassFile)) {
+      return sassFile;
+    }
+
+    partialFile = new AssetId(package, _asPartial(sassPath));
+    if (await buildStep.canRead(partialFile)) {
+      return partialFile;
+    }
+
+    // No version of the filename was found.
+    return null;
   }
+
+  String _asPartial(String path) => join(dirname(path), '_${basename(path)}');
 }
