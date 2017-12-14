@@ -1,3 +1,8 @@
+## 1.1.1
+
+- Fixed compatibility with `.sass` file compilation.
+- Bump `sass` dependency to ^1.0.0-beta.4.
+
 ## 1.1.0
 
 - Support the latest version of `package:build_runner`.

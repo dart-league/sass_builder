@@ -10,7 +10,7 @@ void main() {
   //
   // These tests do not verify any output as that is determined by the sass
   // implementation.
-  group('File import parsing tests', () {
+  group('file import parsing tests', () {
     SassBuilder builder;
     InMemoryAssetWriter writer;
     InMemoryAssetReader reader;
@@ -90,7 +90,8 @@ void main() {
             primary.changeExtension('.css'),
             import.changeExtension('.css')
           ]));
-      expect(reader.assetsRead, unorderedEquals([primary, import]));
+      expect(reader.assetsRead, contains(primary));
+      expect(reader.assetsRead, contains(import));
     });
 
     test('one package import', () async {
@@ -192,6 +193,53 @@ void main() {
             primary.changeExtension('.css'),
             import1.changeExtension('.css')
           ]));
+
+      expect(reader.assetsRead, contains(primary));
+      expect(reader.assetsRead, contains(import1));
+      expect(reader.assetsRead, contains(import2));
+    });
+
+    test('.sass file import parsing', () async {
+      var primary = makeAssetId('a|lib/styles.sass');
+      var import1 = makeAssetId('a|lib/_more_styles.sass');
+      var import2 = makeAssetId('a|lib/_even_more_styles.sass');
+      var inputs = {
+        primary: '''@import 'more_styles', "even_more_styles.sass"''',
+        import1: '''@import even_more_styles''',
+        import2: '''/* no imports */''',
+      };
+
+      reader.cacheStringAsset(primary, inputs[primary]);
+      reader.cacheStringAsset(import1, inputs[import1]);
+      reader.cacheStringAsset(import2, inputs[import2]);
+
+      await runBuilder(builder, inputs.keys, reader, writer, null);
+
+      expect(writer.assets.keys, equals([primary.changeExtension('.css')]));
+
+      expect(reader.assetsRead, contains(primary));
+      expect(reader.assetsRead, contains(import1));
+      expect(reader.assetsRead, contains(import2));
+    });
+
+    test('.sass file imports in other packages', () async {
+      var primary = makeAssetId('a|lib/styles.sass');
+      var import1 = makeAssetId('b|lib/_more_styles.sass');
+      var import2 = makeAssetId('b|lib/_even_more_styles.sass');
+      var inputs = {
+        primary:
+            '''@import package:b/more_styles, package:b/even_more_styles.sass''',
+        import1: '''@import "even_more_styles"''',
+        import2: '''/* no imports */''',
+      };
+
+      reader.cacheStringAsset(primary, inputs[primary]);
+      reader.cacheStringAsset(import1, inputs[import1]);
+      reader.cacheStringAsset(import2, inputs[import2]);
+
+      await runBuilder(builder, inputs.keys, reader, writer, null);
+
+      expect(writer.assets.keys, equals([primary.changeExtension('.css')]));
 
       expect(reader.assetsRead, contains(primary));
       expect(reader.assetsRead, contains(import1));
