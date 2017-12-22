@@ -11,8 +11,8 @@ environment:
 dependencies:
   barback: ^0.15.2
   build: ^0.11.1
-  build_barback: ^0.4.0+2
-  build_runner: ^0.6.1
+  build_barback: ">=0.4.0+2 < 0.6.0"
+  build_config: ^0.2.1
   logging: ^0.11.3
   package_resolver: ^1.0.2
   path: ^1.4.1
@@ -21,4 +21,5 @@ dependencies:
 dev_dependencies:
   bootstrap_sass: 4.0.0-alpha.5+1
   build_test: ^0.9.1
+  build_runner: ^0.7.0
   test: ^0.12.0

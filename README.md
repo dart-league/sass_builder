@@ -15,6 +15,7 @@ dependencies:
     bootstrap_sass: any # this dependency is only for demo purposes
 dev_dependencies:
     sass_builder: ^1.0.0 # update for the latest version
+    build_runner: ^0.7.0
 ```
 
 2\. Create `web/main.scss` containing the following code:
@@ -40,36 +41,8 @@ dev_dependencies:
 }
 ```
 
-4\. Create `tool/build.dart` containing the following code:
-
-```dart
-import 'dart:async';
-
-import 'package:build_runner/build_runner.dart';
-import 'package:sass_builder/phase.dart';
-
-Future main() async {
-  await build([sassBuildAction], deleteFilesByDefault: true);
-}
-
-```
-
-You can also create `tool/watch.dart` with the following code:
-
-```dart
-import 'dart:async';
-
-import 'package:build_runner/build_runner.dart';
-import 'package:sass_builder/phase.dart';
-
-Future main() async {
-  await watch([sassBuildAction], deleteFilesByDefault: true);
-}
-
-```
-
-5\. Run either `tool/build.dart` or `tool/watch.dart` and the file `web/main.css`
-    will be generated containing:
+5\. Run either `pub run build_runner build` or `pub run build_runner watch` and
+    the file `web/main.css` will be generated to a hidden directory containing:
 
 ```css
 .b {
