@@ -41,7 +41,7 @@ dev_dependencies:
 }
 ```
 
-5\. Run either `pub run build_runner build` or `pub run build_runner watch` and
+4\. Run either `pub run build_runner build` or `pub run build_runner watch` and
     the file `web/main.css` will be generated to a hidden directory containing:
 
 ```css
