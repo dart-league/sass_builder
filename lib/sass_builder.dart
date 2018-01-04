@@ -18,6 +18,8 @@ final _sassfileNameRegExp = new RegExp(r'''['"]?([^ ,'"]+)['"]?''');
 final _scssCommentRegExp =
     new RegExp(r'''//.*?\n|/\*.*?\*/''', multiLine: true);
 
+Builder sassBuilder(_) => new SassBuilder();
+
 /// A `Builder` to compile .css files from .scss source using dart-sass.
 ///
 /// NOTE: Because Sass requires reading from the disk this `Builder` copies all

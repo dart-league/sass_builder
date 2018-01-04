@@ -15,6 +15,7 @@ dependencies:
     bootstrap_sass: any # this dependency is only for demo purposes
 dev_dependencies:
     sass_builder: ^1.0.0 # update for the latest version
+    build_runner: ^0.7.0
 ```
 
 2\. Create `web/main.scss` containing the following code:
@@ -25,16 +26,8 @@ dev_dependencies:
 
 {@example example/_sub.scss}
 
-4\. Create `tool/build.dart` containing the following code:
-
-{@example tool/build.dart}
-
-You can also create `tool/watch.dart` with the following code:
-
-{@example tool/watch.dart}
-
-5\. Run either `tool/build.dart` or `tool/watch.dart` and the file `web/main.css`
-    will be generated containing:
+4\. Run either `pub run build_runner build` or `pub run build_runner watch` and
+    the file `web/main.css` will be generated to a hidden directory containing:
 
 {@example example/main.css}
 
