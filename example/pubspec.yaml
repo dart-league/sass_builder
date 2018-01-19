@@ -1,5 +1,4 @@
 name: sass_builder_example
-version: 0.0.1
 description: Example to build .css files from .scss source.
 environment:
   sdk: '>=1.8.0 <2.0.0'
