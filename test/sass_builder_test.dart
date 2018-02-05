@@ -245,5 +245,33 @@ void main() {
       expect(reader.assetsRead, contains(import1));
       expect(reader.assetsRead, contains(import2));
     });
+
+    test('multiple .sass imports in multiple blocks', () async {
+      var primary = makeAssetId('a|lib/styles.sass');
+      var import1 = makeAssetId('b|lib/more_styles.sass');
+      var import2 = makeAssetId('a|lib/_more_styles.sass');
+      var inputs = {
+        primary: '''@import 'package:b/more_styles'
+@import 'more_styles' ''',
+        import1: '''/* no imports */''',
+        import2: '''/* no imports */''',
+      };
+
+      reader.cacheStringAsset(primary, inputs[primary]);
+      reader.cacheStringAsset(import1, inputs[import1]);
+      reader.cacheStringAsset(import2, inputs[import2]);
+
+      await runBuilder(builder, [primary], reader, writer, null);
+
+      expect(
+          writer.assets.keys,
+          unorderedEquals([
+            primary.changeExtension('.css')
+          ]));
+
+      expect(reader.assetsRead, contains(primary));
+      expect(reader.assetsRead, contains(import1));
+      expect(reader.assetsRead, contains(import2));
+    });
   });
 }
