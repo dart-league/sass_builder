@@ -263,11 +263,8 @@ void main() {
 
       await runBuilder(builder, [primary], reader, writer, null);
 
-      expect(
-          writer.assets.keys,
-          unorderedEquals([
-            primary.changeExtension('.css')
-          ]));
+      expect(writer.assets.keys,
+          unorderedEquals([primary.changeExtension('.css')]));
 
       expect(reader.assetsRead, contains(primary));
       expect(reader.assetsRead, contains(import1));
