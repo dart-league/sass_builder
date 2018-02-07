@@ -12,7 +12,8 @@ final _packageNameRegExp = new RegExp(r'''package:([^\/]*)\/''');
 final _packagePathRegExp = new RegExp(r'''package:[^\/]*\/(.*)''');
 final _scssImportBlockRegExp =
     new RegExp(r'''@import ([^;]*);''', multiLine: true);
-final _sassImportBlockRegExp = new RegExp(r'''@import (.*)$''');
+final _sassImportBlockRegExp =
+    new RegExp(r'''@import (.*)$''', multiLine: true);
 final _scssfileNameRegExp = new RegExp(r'''(?:\'|\")([^\'\"]*)(?:\'|\")''');
 final _sassfileNameRegExp = new RegExp(r'''['"]?([^ ,'"]+)['"]?''');
 final _scssCommentRegExp =
