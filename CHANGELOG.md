@@ -1,3 +1,8 @@
+## 1.1.3
+
+* Fix example and documentation
+* Fix import sass files (fix #25)
+
 ## 1.1.2
 
 * Widen `build` and `build_test` dependencies.
