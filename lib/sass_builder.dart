@@ -119,7 +119,7 @@ class SassBuilder implements Builder {
         if (importId == null) {
           // Only copy imports that are found. If there is a problem with a
           // missing file, let sass compilation fail and report it.
-          _log.severe('could not read file: ${importId}');
+          _log.warning('can not read file: ${import.group(1)}');
           continue;
         }
 
@@ -146,8 +146,8 @@ class SassBuilder implements Builder {
 
   // Locates the asset for `path` in `package` or returns null if unreadable.
   //
-  // Probes for different versions of the path in case the file is a parial
-  // (leading underscore can be ommited) or if the extension is ommited per the
+  // Probes for different versions of the path in case the file is a partial
+  // (leading underscore can be omitted) or if the extension is omitted per the
   // SASS `@import` syntax. Tests for file readability via `buildStep`.
   Future<AssetId> _findImport(
       String package, String path, BuildStep buildStep) async {
@@ -158,7 +158,7 @@ class SassBuilder implements Builder {
       return importId;
     }
 
-    // Try as a patial.
+    // Try as a partial.
     var partialFile = new AssetId(package, _asPartial(path));
     if (await buildStep.canRead(partialFile)) {
       return partialFile;
