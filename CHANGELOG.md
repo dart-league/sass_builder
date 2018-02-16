@@ -1,3 +1,7 @@
+## 1.1.4
+
+* Improve warning message when an imported file can not be found.
+
 ## 1.1.3
 
 * Fix example and documentation
