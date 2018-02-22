@@ -33,9 +33,13 @@ class SassBuilder implements Builder {
 
   final _log = new Logger('sass_builder');
   final String _outputExtension;
+  final String _outputStyle;
 
-  SassBuilder({String outputExtension: '.css'})
-      : this._outputExtension = outputExtension;
+  SassBuilder({String outputExtension: '.css', String outputStyle})
+      : this._outputExtension = outputExtension,
+        this._outputStyle = outputStyle ?? _defaultOutputStyle;
+
+  static final _defaultOutputStyle = OutputStyle.expanded.toString();
 
   @override
   Future build(BuildStep buildStep) async {
@@ -56,7 +60,10 @@ class SassBuilder implements Builder {
     var tempAssetPath = tempDir.fileFor(inputId).path;
     _log.fine('compiling file: ${tempAssetPath}');
     var cssOutput = compile(tempAssetPath,
-        packageResolver: new SyncPackageResolver.root(tempDir.packagesDir.uri));
+        packageResolver: new SyncPackageResolver.root(tempDir.packagesDir.uri),
+        style: this._outputStyle == _defaultOutputStyle
+            ? OutputStyle.expanded
+            : OutputStyle.compressed);
 
     // Write the builder output
     var outputId = inputId.changeExtension(_outputExtension);
