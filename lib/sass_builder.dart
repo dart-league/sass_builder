@@ -5,7 +5,7 @@ import 'package:build/build.dart';
 import 'package:logging/logging.dart';
 import 'package:package_resolver/package_resolver.dart';
 import 'package:path/path.dart';
-import 'package:sass/sass.dart';
+import 'package:sass/sass.dart' as sass;
 import 'package:scratch_space/scratch_space.dart';
 
 final _packageNameRegExp = new RegExp(r'''package:([^\/]*)\/''');
@@ -55,7 +55,7 @@ class SassBuilder implements Builder {
     // Compile the css.
     var tempAssetPath = tempDir.fileFor(inputId).path;
     _log.fine('compiling file: ${tempAssetPath}');
-    var cssOutput = compile(tempAssetPath,
+    var cssOutput = sass.compile(tempAssetPath,
         packageResolver: new SyncPackageResolver.root(tempDir.packagesDir.uri));
 
     // Write the builder output
