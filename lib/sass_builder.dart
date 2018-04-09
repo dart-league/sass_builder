@@ -39,7 +39,7 @@ class SassBuilder implements Builder {
       : this._outputExtension = outputExtension,
         this._outputStyle = outputStyle ?? _defaultOutputStyle;
 
-  static final _defaultOutputStyle = OutputStyle.expanded.toString();
+  static final _defaultOutputStyle = sass.OutputStyle.expanded.toString();
 
   @override
   Future build(BuildStep buildStep) async {
@@ -62,8 +62,8 @@ class SassBuilder implements Builder {
     var cssOutput = sass.compile(tempAssetPath,
         packageResolver: new SyncPackageResolver.root(tempDir.packagesDir.uri),
         style: this._outputStyle == _defaultOutputStyle
-            ? OutputStyle.expanded
-            : OutputStyle.compressed);
+            ? sass.OutputStyle.expanded
+            : sass.OutputStyle.compressed);
 
     // Write the builder output
     var outputId = inputId.changeExtension(_outputExtension);
