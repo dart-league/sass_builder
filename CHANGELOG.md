@@ -1,3 +1,7 @@
+## 1.1.5
+
+* Fix a bug where the class `Logger` conflicted with `sass`, causing a crash.
+
 ## 1.1.4
 
 * Improve warning message when an imported file can not be found.
