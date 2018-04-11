@@ -33,9 +33,13 @@ class SassBuilder implements Builder {
 
   final _log = new Logger('sass_builder');
   final String _outputExtension;
+  final String _outputStyle;
 
-  SassBuilder({String outputExtension: '.css'})
-      : this._outputExtension = outputExtension;
+  SassBuilder({String outputExtension: '.css', String outputStyle})
+      : this._outputExtension = outputExtension,
+        this._outputStyle = outputStyle ?? _defaultOutputStyle.toString();
+
+  static final _defaultOutputStyle = sass.OutputStyle.expanded;
 
   @override
   Future build(BuildStep buildStep) async {
@@ -56,12 +60,30 @@ class SassBuilder implements Builder {
     var tempAssetPath = tempDir.fileFor(inputId).path;
     _log.fine('compiling file: ${tempAssetPath}');
     var cssOutput = sass.compile(tempAssetPath,
-        packageResolver: new SyncPackageResolver.root(tempDir.packagesDir.uri));
+        packageResolver: new SyncPackageResolver.root(tempDir.packagesDir.uri),
+        style: _getValidOutputStyle());
 
     // Write the builder output
     var outputId = inputId.changeExtension(_outputExtension);
     buildStep.writeAsString(outputId, '${cssOutput}\n');
     _log.fine('wrote css file: ${outputId.path}');
+  }
+
+  /// Returns a valid `OutputStyle` value to the `style` argument of [sass.compile] during a [build].
+  ///
+  /// * If [_outputStyle] is not `sass.OutputStyle.compressed` or `sass.OutputStyle.expanded`,
+  ///   a warning will be logged informing the user that the [_defaultOutputStyle] will be used.
+  sass.OutputStyle _getValidOutputStyle() {
+    if (_outputStyle == sass.OutputStyle.compressed.toString()) {
+      return sass.OutputStyle.compressed;
+    } else if (_outputStyle == sass.OutputStyle.expanded.toString()) {
+      return sass.OutputStyle.expanded;
+    } else {
+      _log.warning('Unknown outputStyle provided: "$_outputStyle". '
+          'Supported values are: "expanded" and "compressed". '
+          'The default value of "${_defaultOutputStyle.toString()}" will be used.');
+      return _defaultOutputStyle;
+    }
   }
 
   @override
