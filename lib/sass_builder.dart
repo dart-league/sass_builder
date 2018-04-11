@@ -74,12 +74,12 @@ class SassBuilder implements Builder {
   /// * If [_outputStyle] is not `sass.OutputStyle.compressed` or `sass.OutputStyle.expanded`,
   ///   a warning will be logged informing the user that the [_defaultOutputStyle] will be used.
   sass.OutputStyle _getValidOutputStyle() {
-    if (this._outputStyle == sass.OutputStyle.compressed.toString()) {
+    if (_outputStyle == sass.OutputStyle.compressed.toString()) {
       return sass.OutputStyle.compressed;
-    } else if (this._outputStyle == sass.OutputStyle.expanded.toString()) {
+    } else if (_outputStyle == sass.OutputStyle.expanded.toString()) {
       return sass.OutputStyle.expanded;
     } else {
-      _log.warning('Unknown outputStyle provided: "${this._outputStyle}". '
+      _log.warning('Unknown outputStyle provided: "$_outputStyle". '
           'Supported values are: "expanded" and "compressed". '
           'The default value of "${_defaultOutputStyle.toString()}" will be used.');
       return _defaultOutputStyle;
