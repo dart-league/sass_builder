@@ -8,12 +8,6 @@ class SassBuilderTransform extends BuilderTransformer {
   static final _outputStyleKey = 'outputStyle';
   SassBuilderTransform(SassBuilder builder) : super(builder);
 
-  SassBuilderTransform.customExtension(String outputExtension)
-      : super(new SassBuilder(outputExtension: outputExtension));
-
-  SassBuilderTransform.customOutputStyle(String outputStyle)
-      : super(new SassBuilder(outputStyle: outputStyle));
-
   factory SassBuilderTransform.asPlugin(BarbackSettings settings) {
     SassBuilder builder;
     var outputStyle = settings.configuration[_outputStyleKey] as String;
