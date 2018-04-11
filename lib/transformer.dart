@@ -6,7 +6,7 @@ import 'sass_builder.dart';
 class SassBuilderTransform extends BuilderTransformer {
   static final _outputExtensionKey = 'outputExtension';
   static final _outputStyleKey = 'outputStyle';
-  SassBuilderTransform() : super(new SassBuilder());
+  SassBuilderTransform(SassBuilder builder) : super(builder);
 
   SassBuilderTransform.customExtension(String outputExtension)
       : super(new SassBuilder(outputExtension: outputExtension));
@@ -15,14 +15,18 @@ class SassBuilderTransform extends BuilderTransformer {
       : super(new SassBuilder(outputStyle: outputStyle));
 
   factory SassBuilderTransform.asPlugin(BarbackSettings settings) {
+    SassBuilder builder;
+    var outputStyle = settings.configuration[_outputStyleKey] as String;
+
     if (settings.configuration.containsKey(_outputExtensionKey)) {
-      return new SassBuilderTransform.customExtension(
-          settings.configuration[_outputExtensionKey] as String);
+      builder = new SassBuilder(
+          outputExtension: settings.configuration[_outputExtensionKey] as String,
+          outputStyle: outputStyle,
+      );
+    } else {
+      builder = new SassBuilder(outputStyle: outputStyle);
     }
-    if (settings.configuration.containsKey(_outputStyleKey)) {
-      return new SassBuilderTransform.customOutputStyle(
-          settings.configuration[_outputStyleKey]);
-    }
-    return new SassBuilderTransform();
+
+    return new SassBuilderTransform(builder);
   }
 }
