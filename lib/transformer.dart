@@ -20,8 +20,8 @@ class SassBuilderTransform extends BuilderTransformer {
 
     if (settings.configuration.containsKey(_outputExtensionKey)) {
       builder = new SassBuilder(
-          outputExtension: settings.configuration[_outputExtensionKey] as String,
-          outputStyle: outputStyle,
+        outputExtension: settings.configuration[_outputExtensionKey] as String,
+        outputStyle: outputStyle,
       );
     } else {
       builder = new SassBuilder(outputStyle: outputStyle);
