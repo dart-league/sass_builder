@@ -18,8 +18,10 @@ final _scssfileNameRegExp = new RegExp(r'''(?:\'|\")([^\'\"]*)(?:\'|\")''');
 final _sassfileNameRegExp = new RegExp(r'''['"]?([^ ,'"]+)['"]?''');
 final _scssCommentRegExp =
     new RegExp(r'''//.*?\n|/\*.*?\*/''', multiLine: true);
+final outputStyleKey = 'outputStyle';
 
-Builder sassBuilder(_) => new SassBuilder();
+Builder sassBuilder(BuilderOptions options) =>
+    new SassBuilder(outputStyle: options.config[outputStyleKey]);
 
 /// A `Builder` to compile .css files from .scss source using dart-sass.
 ///
@@ -69,10 +71,12 @@ class SassBuilder implements Builder {
     _log.fine('wrote css file: ${outputId.path}');
   }
 
-  /// Returns a valid `OutputStyle` value to the `style` argument of [sass.compile] during a [build].
+  /// Returns a valid `OutputStyle` value to the `style` argument of
+  /// [sass.compile] during a [build].
   ///
-  /// * If [_outputStyle] is not `sass.OutputStyle.compressed` or `sass.OutputStyle.expanded`,
-  ///   a warning will be logged informing the user that the [_defaultOutputStyle] will be used.
+  /// * If [_outputStyle] is not `sass.OutputStyle.compressed` or
+  /// `sass.OutputStyle.expanded`, a warning will be logged informing the user
+  /// that the [_defaultOutputStyle] will be used.
   sass.OutputStyle _getValidOutputStyle() {
     if (_outputStyle == sass.OutputStyle.compressed.toString()) {
       return sass.OutputStyle.compressed;
@@ -80,8 +84,8 @@ class SassBuilder implements Builder {
       return sass.OutputStyle.expanded;
     } else {
       _log.warning('Unknown outputStyle provided: "$_outputStyle". '
-          'Supported values are: "expanded" and "compressed". '
-          'The default value of "${_defaultOutputStyle.toString()}" will be used.');
+          'Supported values are: "expanded" and "compressed". The default '
+          'value of "${_defaultOutputStyle.toString()}" will be used.');
       return _defaultOutputStyle;
     }
   }

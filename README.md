@@ -8,6 +8,14 @@ of [sass][2].
 [1]: https://github.com/dart-lang/build
 [2]: https://github.com/sass/dart-sass
 
+## Attention: Transformer to be Removed 
+
+> The transformer provided by this package will be deprecated and removed soon. 
+> The `pub build` and `pub serve` commands are being replaced by `build_runner`.
+>
+> * [Announcement](https://groups.google.com/a/dartlang.org/forum/#!topic/announce/R4kV3us0Sm8)
+> * [Migration Guide](https://webdev-dartlang-org-dev.firebaseapp.com/dart-2#tools)
+
 ## Usage
 
 1\. Create a `pubspec.yaml` file containing the following code:
@@ -82,6 +90,25 @@ dev_dependencies:
 }
 ```
 
+### Builder Options
+
+To configure options for the builder see the `build_config` 
+[README](https://github.com/dart-lang/build/blob/master/build_config/README.md). 
+
+* `outputStyle`: Supports `expanded` or `compressed`. Defaults to `expanded`.
+
+Example:
+
+```yaml
+targets:
+  $default:
+    builders:
+      sass_builder:
+        options:
+          outputStyle: compressed
+```
+
+
 ## Wrapped as a Pub Transformer
 
 To automatically generate .css files when you run `pub build` or `pub serve`
@@ -96,11 +123,16 @@ transformers:
 - sass_builder
 ```
 
-By default this will generate .css files for every non-partial .scss file in your project.
- You can customize the extension of the generated files with the `outputExtension` option:
+### Transformer Options
+
+* `outputExtension`: The extension to use for output files. Defaults to `.css`.
+* `outputStyle`: Supports `expanded` and `compressed`. Defautls to `expanded`.
+
+Example:
 
 ```yaml
 transformers:
 - sass_builder:
     outputExtension: .scss.css
+    outputStyle: compressed
 ```

@@ -1,3 +1,9 @@
+## 1.2.0
+
+* Add option to configure output style. Supports `expanded` or `compressed` as 
+  provided by the Dart implementation of Sass. Defaults to `expanded`.
+* Removed dev dependencies that were no longer used.
+
 ## 1.1.5
 
 * Fix a bug where the class `Logger` conflicted with `sass`, causing a crash.
