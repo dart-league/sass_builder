@@ -1,5 +1,5 @@
 name: sass_builder
-version: 1.2.0
+version: 1.2.1-dev
 authors:
 - Luis Vargas <luisvargastijerino@gmail.com>
 - Kevin Moore <kevmoo@github.com>
@@ -7,12 +7,12 @@ authors:
 homepage: https://github.com/dart-league/sass_builder
 description: Transpile sass files using the "build" package.
 environment:
-  sdk: '>=1.8.0 <2.0.0'
+  sdk: '>=2.0.0-dev.9 <2.0.0'
 dependencies:
   barback: '>=0.15.2 <0.15.2+15'
-  build: '>=0.11.1 <0.13.0'
+  build: ^0.12.5
   build_barback: '>=0.4.0+2 <0.6.0'
-  build_config: ^0.2.1
+  build_config: ^0.2.6
   logging: ^0.11.3
   package_resolver: ^1.0.2
   path: ^1.4.1

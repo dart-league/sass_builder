@@ -1,3 +1,8 @@
+## 1.2.1
+
+* Add a builder which will clean up `.scss` and `.sass` sources for `--release`
+  builds.
+
 ## 1.2.0
 
 * Add option to configure output style. Supports `expanded` or `compressed` as 

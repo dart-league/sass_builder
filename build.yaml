@@ -1,9 +1,17 @@
 builders:
   sass_builder:
-    target: "sass_builder"
     import: "package:sass_builder/sass_builder.dart"
     builder_factories: ["sassBuilder"]
     auto_apply: dependents
     build_extensions:
       .scss: [".css"]
       .sass: [".css"]
+    applies_builders:
+      - sass_builder|sass_source_cleanup
+post_process_builders:
+  sass_source_cleanup:
+    import: "package:sass_builder/sass_builder.dart"
+    builder_factory: "sassSourceCleanup"
+    defaults:
+      release_options:
+        enabled: true

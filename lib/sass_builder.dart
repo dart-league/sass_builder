@@ -23,6 +23,10 @@ final outputStyleKey = 'outputStyle';
 Builder sassBuilder(BuilderOptions options) =>
     new SassBuilder(outputStyle: options.config[outputStyleKey]);
 
+PostProcessBuilder sassSourceCleanup(BuilderOptions options) =>
+    new FileDeletingBuilder(['.scss', '.sass'],
+        isEnabled: (options.config['enabled'] as bool) ?? false);
+
 /// A `Builder` to compile .css files from .scss source using dart-sass.
 ///
 /// NOTE: Because Sass requires reading from the disk this `Builder` copies all
