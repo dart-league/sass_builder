@@ -7,7 +7,7 @@ authors:
 homepage: https://github.com/dart-league/sass_builder
 description: Transpile sass files using the "build" package.
 environment:
-  sdk: '>=2.0.0-dev.9 <2.0.0'
+  sdk: '>=2.0.0-dev.51 <2.0.0'
 dependencies:
   build: ^0.12.5
   build_config: ^0.2.6

@@ -1,7 +1,7 @@
 name: sass_builder_example
 description: Example to build .css files from .scss source.
 environment:
-  sdk: '>=1.8.0 <2.0.0'
+  sdk: '>=2.0.0-dev.51 <2.0.0'
 dependencies:
   bootstrap_sass: 4.0.0-alpha.5+1
 dev_dependencies:
