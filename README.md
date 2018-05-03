@@ -8,10 +8,11 @@ of [sass][2].
 [1]: https://github.com/dart-lang/build
 [2]: https://github.com/sass/dart-sass
 
-## Attention: Transformer to be Removed 
+## Attention: Transformer has been removed in v2.0.0.
 
-> The transformer provided by this package will be deprecated and removed soon. 
-> The `pub build` and `pub serve` commands are being replaced by `build_runner`.
+> The transformer provided by this package has been removed. The `pub build` and
+> `pub serve` commands have been replaced by `build_runner` in version
+> 2.0.0-dev.51.0 of the Dart SDK.
 >
 > * [Announcement](https://groups.google.com/a/dartlang.org/forum/#!topic/announce/R4kV3us0Sm8)
 > * [Migration Guide](https://webdev-dartlang-org-dev.firebaseapp.com/dart-2#tools)
@@ -26,8 +27,8 @@ dependencies:
     bootstrap_sass: any
 dev_dependencies:
     # update to the latest version
-    sass_builder: ^1.0.0
-    build_runner: ^0.7.0
+    sass_builder: ^2.0.0
+    build_runner: ^0.8.8
 ```
 
 2\. Create `web/main.scss` containing the following code:
@@ -92,8 +93,8 @@ dev_dependencies:
 
 ### Builder Options
 
-To configure options for the builder see the `build_config` 
-[README](https://github.com/dart-lang/build/blob/master/build_config/README.md). 
+To configure options for the builder see the `build_config`
+[README](https://github.com/dart-lang/build/blob/master/build_config/README.md).
 
 * `outputStyle`: Supports `expanded` or `compressed`. Defaults to `expanded`.
 
@@ -106,33 +107,4 @@ targets:
       sass_builder:
         options:
           outputStyle: compressed
-```
-
-
-## Wrapped as a Pub Transformer
-
-To automatically generate .css files when you run `pub build` or `pub serve`
-you can add sass_builder as a transformer in your package.
-
-In your `pubspec.yaml` add the following code:
-
-```yaml
-dependencies:
-  sass_builder ^1.0.0 # update for the latest version
-transformers:
-- sass_builder
-```
-
-### Transformer Options
-
-* `outputExtension`: The extension to use for output files. Defaults to `.css`.
-* `outputStyle`: Supports `expanded` and `compressed`. Defautls to `expanded`.
-
-Example:
-
-```yaml
-transformers:
-- sass_builder:
-    outputExtension: .scss.css
-    outputStyle: compressed
 ```
