@@ -1,11 +1,17 @@
-## 1.2.1
+## 2.0.0
+
+### New Feature
 
 * Add a builder which will clean up `.scss` and `.sass` sources for `--release`
   builds.
 
+### Breaking Change
+
+* Remove the pub transformer.
+
 ## 1.2.0
 
-* Add option to configure output style. Supports `expanded` or `compressed` as 
+* Add option to configure output style. Supports `expanded` or `compressed` as
   provided by the Dart implementation of Sass. Defaults to `expanded`.
 * Removed dev dependencies that were no longer used.
 
