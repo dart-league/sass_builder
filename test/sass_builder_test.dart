@@ -4,13 +4,20 @@ import 'package:sass_builder/sass_builder.dart';
 import 'package:test/test.dart';
 
 void main() {
-  // These tests only verify which assets are read and written by the
-  // SassBuilder. This is because the inputs are being parsed to find what files
-  // they import.
-  //
-  // These tests do not verify any output as that is determined by the sass
-  // implementation.
-  group('file import parsing tests', () {
+  /// These tests only verify which assets are read and written by the
+  /// [SassBuilder]. This is to test the behaivor of the AsyncImporter used to
+  /// handle Dart package imports and perform all file IO through the
+  /// build_step.
+  ///
+  /// In some cases additional dependencies are created on files that do not
+  /// exists because Sass allows the user to ommit the file extensions `.scss`
+  /// or `.sass`, the partial prefix `_` or the file name altogether. These
+  /// tests avoid testing for those dependencies that are created when probing
+  /// for imports.
+  ///
+  /// These tests do not verify any output as that is determined by the Sass
+  /// implementation.
+  group('build IO tests', () {
     SassBuilder builder;
     InMemoryAssetWriter writer;
     InMemoryAssetReader reader;
@@ -49,7 +56,7 @@ void main() {
       await runBuilder(builder, inputs.keys, reader, writer, null);
 
       expect(writer.assets.keys, equals([primary.changeExtension('.css')]));
-      expect(reader.assetsRead, unorderedEquals([primary, import]));
+      expect(reader.assetsRead, containsAll([primary, import]));
     });
 
     test('one relative partial import simplified name', () async {
@@ -66,9 +73,7 @@ void main() {
       await runBuilder(builder, inputs.keys, reader, writer, null);
 
       expect(writer.assets.keys, equals([primary.changeExtension('.css')]));
-
-      expect(reader.assetsRead, contains(primary));
-      expect(reader.assetsRead, contains(import));
+      expect(reader.assetsRead, containsAll([primary, import]));
     });
 
     test('one relative import', () async {
@@ -90,8 +95,7 @@ void main() {
             primary.changeExtension('.css'),
             import.changeExtension('.css')
           ]));
-      expect(reader.assetsRead, contains(primary));
-      expect(reader.assetsRead, contains(import));
+      expect(reader.assetsRead, containsAll([primary, import]));
     });
 
     test('one package import', () async {
@@ -108,9 +112,7 @@ void main() {
       await runBuilder(builder, inputs.keys, reader, writer, null);
 
       expect(writer.assets.keys, equals([primary.changeExtension('.css')]));
-
-      expect(reader.assetsRead, contains(primary));
-      expect(reader.assetsRead, contains(import));
+      expect(reader.assetsRead, containsAll([primary, import]));
     });
 
     test('multiple imports in one block', () async {
@@ -136,10 +138,7 @@ void main() {
             primary.changeExtension('.css'),
             import1.changeExtension('.css')
           ]));
-
-      expect(reader.assetsRead, contains(primary));
-      expect(reader.assetsRead, contains(import1));
-      expect(reader.assetsRead, contains(import2));
+      expect(reader.assetsRead, containsAll([primary, import1, import2]));
     });
 
     test('multiple imports in multiple blocks', () async {
@@ -165,10 +164,7 @@ void main() {
             primary.changeExtension('.css'),
             import1.changeExtension('.css')
           ]));
-
-      expect(reader.assetsRead, contains(primary));
-      expect(reader.assetsRead, contains(import1));
-      expect(reader.assetsRead, contains(import2));
+      expect(reader.assetsRead, containsAll([primary, import1, import2]));
     });
 
     test('transitive imports', () async {
@@ -194,9 +190,7 @@ void main() {
             import1.changeExtension('.css')
           ]));
 
-      expect(reader.assetsRead, contains(primary));
-      expect(reader.assetsRead, contains(import1));
-      expect(reader.assetsRead, contains(import2));
+      expect(reader.assetsRead, containsAll([primary, import1, import2]));
     });
 
     test('.sass file import parsing', () async {
@@ -216,10 +210,7 @@ void main() {
       await runBuilder(builder, inputs.keys, reader, writer, null);
 
       expect(writer.assets.keys, equals([primary.changeExtension('.css')]));
-
-      expect(reader.assetsRead, contains(primary));
-      expect(reader.assetsRead, contains(import1));
-      expect(reader.assetsRead, contains(import2));
+      expect(reader.assetsRead, containsAll([primary, import1, import2]));
     });
 
     test('.sass file imports in other packages', () async {
@@ -240,10 +231,7 @@ void main() {
       await runBuilder(builder, inputs.keys, reader, writer, null);
 
       expect(writer.assets.keys, equals([primary.changeExtension('.css')]));
-
-      expect(reader.assetsRead, contains(primary));
-      expect(reader.assetsRead, contains(import1));
-      expect(reader.assetsRead, contains(import2));
+      expect(reader.assetsRead, containsAll([primary, import1, import2]));
     });
 
     test('multiple .sass imports in multiple blocks', () async {
@@ -265,10 +253,7 @@ void main() {
 
       expect(writer.assets.keys,
           unorderedEquals([primary.changeExtension('.css')]));
-
-      expect(reader.assetsRead, contains(primary));
-      expect(reader.assetsRead, contains(import1));
-      expect(reader.assetsRead, contains(import2));
+      expect(reader.assetsRead, containsAll([primary, import1, import2]));
     });
   });
 }

@@ -1,3 +1,10 @@
+## 2.0.1
+
+* Fix bug where `.sass` entrypoints were not being compiled with "indented"
+  syntax.
+* Remove all temp file creation. Files are now imported using a custom
+  [AsyncImporter](https://github.com/sass/dart-sass/blob/0a9a503ae08b2e57b97d5e791024089986dd85c7/lib/src/importer/async.dart#L22).
+
 ## 2.0.0
 
 ### New Feature
