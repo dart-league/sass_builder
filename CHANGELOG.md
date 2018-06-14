@@ -1,3 +1,8 @@
+## 2.0.2
+
+* Fix bug where compiling Dart package imports in Windows environment would
+  fail.
+
 ## 2.0.1
 
 * Fix bug where `.sass` entrypoints were not being compiled with "indented"
