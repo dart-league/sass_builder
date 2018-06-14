@@ -54,7 +54,7 @@ class BuildImporter extends sass.AsyncImporter {
   Future<List<AssetId>> _tryImport(String import) async {
     final imports = <AssetId>[];
     final partialId = new AssetId.resolve(
-        p.join(p.dirname(import), '_${p.basename(import)}'),
+        p.url.join(p.dirname(import), '_${p.basename(import)}'),
         from: _buildStep.inputId);
     if (await _buildStep.canRead(partialId)) imports.add(partialId);
     final importId = new AssetId.resolve(import, from: _buildStep.inputId);
@@ -67,7 +67,7 @@ class BuildImporter extends sass.AsyncImporter {
   ///
   /// Otherwise, returns `null`.
   Future<AssetId> _tryImportAsDirectory(String import) async =>
-      _exactlyOne(await _tryImportWithExtensions(p.join(import, 'index')));
+      _exactlyOne(await _tryImportWithExtensions(p.url.join(import, 'index')));
 
   /// If [imports] contains exactly one import [AssetId], returns that import.
   ///
