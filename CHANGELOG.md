@@ -1,3 +1,7 @@
+## 2.0.3
+
+* Upgrade selected package dependencies.
+
 ## 2.0.2
 
 * Fix bug where compiling Dart package imports in Windows environment would
