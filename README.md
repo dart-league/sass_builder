@@ -96,9 +96,10 @@ dev_dependencies:
 To configure options for the builder see the `build_config`
 [README](https://github.com/dart-lang/build/blob/master/build_config/README.md).
 
-* `outputStyle`: Supports `expanded` or `compressed`. Defaults to `expanded`.
+* `outputStyle`: Supports `expanded` or `compressed`. Defaults to `expanded` in
+  dev mode, and `compressed` in release mode.
 
-Example:
+Example that compresses output in dev mode:
 
 ```yaml
 targets:

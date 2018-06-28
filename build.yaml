@@ -8,6 +8,9 @@ builders:
       .sass: [".css"]
     applies_builders:
       - sass_builder|sass_source_cleanup
+    defaults:
+      release_options:
+        outputStyle: compressed
 post_process_builders:
   sass_source_cleanup:
     import: "package:sass_builder/sass_builder.dart"
