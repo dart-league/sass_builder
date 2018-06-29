@@ -1,3 +1,7 @@
+## 2.1.0
+
+* Output style is now `compressed` by default for release builds.
+
 ## 2.0.3
 
 * Upgrade selected package dependencies.
