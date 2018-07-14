@@ -1,3 +1,7 @@
+## 2.1.1
+
+* Set max SDK version to <3.0.0
+
 ## 2.1.0
 
 * Output style is now `compressed` by default for release builds.
