@@ -11,8 +11,9 @@ import 'package:sass/sass.dart' as sass;
 /// https://github.com/sass/dart-sass/blob/f8b2c9111c1d5a3c07c9c8c0828b92bd87c548c9/lib/src/importer/utils.dart
 class BuildImporter extends sass.AsyncImporter {
   final BuildStep _buildStep;
+  final List<String> _includePaths;
 
-  BuildImporter(this._buildStep);
+  BuildImporter(this._buildStep, this._includePaths);
 
   @override
   FutureOr<Uri> canonicalize(Uri url) async =>
@@ -59,6 +60,19 @@ class BuildImporter extends sass.AsyncImporter {
     if (await _buildStep.canRead(partialId)) imports.add(partialId);
     final importId = new AssetId.resolve(import, from: _buildStep.inputId);
     if (await _buildStep.canRead(importId)) imports.add(importId);
+
+    for (var includePath in _includePaths) {
+      final partialId = new AssetId.resolve(
+        p.url.join(
+          'asset:${_buildStep.inputId.package}/${includePath}',
+          p.dirname(import),
+          '_${p.basename(import)}'));
+      if(await _buildStep.canRead(partialId)) imports.add(partialId);
+      final importId = new AssetId.resolve(p.url
+          .join('asset:${_buildStep.inputId.package}/${includePath}', import));
+      if (await _buildStep.canRead(importId)) imports.add(importId);
+    }
+
     return imports;
   }
 

@@ -193,6 +193,47 @@ void main() {
       expect(reader.assetsRead, containsAll([primary, import1, import2]));
     });
 
+    test('consults include path', () async {
+      var primary = makeAssetId('a|lib/syles.scss');
+      var import = makeAssetId('a|search_path/module/styles.scss');
+      var inputs = {
+        primary: '''@import 'module/styles';''',
+        import: '''/* no imports */''',
+      };
+
+      reader.cacheStringAsset(primary, inputs[primary]);
+      reader.cacheStringAsset(import, inputs[import]);
+
+      builder = SassBuilder(includePaths: ['search_path']);
+
+      await runBuilder(builder, inputs.keys, reader, writer, null);
+
+      expect(writer.assets.keys, unorderedEquals([
+        primary.changeExtension('.css'),
+        import.changeExtension('.css')
+      ]));
+      expect(reader.assetsRead, containsAll([primary, import]));
+    });
+
+    test('consults include path for partials', () async {
+      var primary = makeAssetId('a|lib/syles.scss');
+      var import = makeAssetId('a|search_path/module/_styles.scss');
+      var inputs = {
+        primary: '''@import 'module/styles';''',
+        import: '''/* no imports */''',
+      };
+
+      reader.cacheStringAsset(primary, inputs[primary]);
+      reader.cacheStringAsset(import, inputs[import]);
+
+      builder = SassBuilder(includePaths: ['search_path']);
+
+      await runBuilder(builder, inputs.keys, reader, writer, null);
+
+      expect(writer.assets.keys, equals([primary.changeExtension('.css')]));
+      expect(reader.assetsRead, containsAll([primary, import]));
+    });
+
     test('.sass file import parsing', () async {
       var primary = makeAssetId('a|lib/styles.sass');
       var import1 = makeAssetId('a|lib/_more_styles.sass');

@@ -7,9 +7,12 @@ import 'package:sass/sass.dart' as sass;
 import 'src/build_importer.dart';
 
 final outputStyleKey = 'outputStyle';
+final includePathsKey = 'includePaths';
 
 Builder sassBuilder(BuilderOptions options) =>
-    new SassBuilder(outputStyle: options.config[outputStyleKey]);
+    new SassBuilder(
+      outputStyle: options.config[outputStyleKey], 
+      includePaths: options.config[includePathsKey].cast<String>());
 
 PostProcessBuilder sassSourceCleanup(BuilderOptions options) =>
     new FileDeletingBuilder(['.scss', '.sass'],
@@ -21,10 +24,12 @@ class SassBuilder implements Builder {
   static final _defaultOutputStyle = sass.OutputStyle.expanded;
   final String _outputExtension;
   final String _outputStyle;
+  final List<String> _includePaths;
 
-  SassBuilder({String outputExtension: '.css', String outputStyle})
+  SassBuilder({String outputExtension: '.css', String outputStyle, List<String> includePaths: const []})
       : this._outputExtension = outputExtension,
-        this._outputStyle = outputStyle ?? _defaultOutputStyle.toString();
+        this._outputStyle = outputStyle ?? _defaultOutputStyle.toString(),
+        this._includePaths = includePaths ?? [];
 
   @override
   Future build(BuildStep buildStep) async {
@@ -41,7 +46,7 @@ class SassBuilder implements Builder {
     final cssOutput = await sass.compileStringAsync(
         await buildStep.readAsString(inputId),
         indented: inputId.extension == '.sass',
-        importers: [new BuildImporter(buildStep)],
+        importers: [new BuildImporter(buildStep, _includePaths)],
         style: _getValidOutputStyle());
 
     // Write the builder output.
