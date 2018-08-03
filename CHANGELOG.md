@@ -1,6 +1,10 @@
+## 2.1.2
+
+* Widen Sass dependency.
+
 ## 2.1.1
 
-* Set max SDK version to <3.0.0
+* Set max SDK version to <3.0.0.
 
 ## 2.1.0
 
