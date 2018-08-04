@@ -62,12 +62,11 @@ class BuildImporter extends sass.AsyncImporter {
     if (await _buildStep.canRead(importId)) imports.add(importId);
 
     for (var includePath in _includePaths) {
-      final partialId = new AssetId.resolve(
-        p.url.join(
+      final partialId = new AssetId.resolve(p.url.join(
           'asset:${_buildStep.inputId.package}/${includePath}',
           p.dirname(import),
           '_${p.basename(import)}'));
-      if(await _buildStep.canRead(partialId)) imports.add(partialId);
+      if (await _buildStep.canRead(partialId)) imports.add(partialId);
       final importId = new AssetId.resolve(p.url
           .join('asset:${_buildStep.inputId.package}/${includePath}', import));
       if (await _buildStep.canRead(importId)) imports.add(importId);

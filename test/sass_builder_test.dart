@@ -208,10 +208,12 @@ void main() {
 
       await runBuilder(builder, inputs.keys, reader, writer, null);
 
-      expect(writer.assets.keys, unorderedEquals([
-        primary.changeExtension('.css'),
-        import.changeExtension('.css')
-      ]));
+      expect(
+          writer.assets.keys,
+          unorderedEquals([
+            primary.changeExtension('.css'),
+            import.changeExtension('.css')
+          ]));
       expect(reader.assetsRead, containsAll([primary, import]));
     });
 

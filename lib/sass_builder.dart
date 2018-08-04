@@ -9,10 +9,9 @@ import 'src/build_importer.dart';
 final outputStyleKey = 'outputStyle';
 final includePathsKey = 'includePaths';
 
-Builder sassBuilder(BuilderOptions options) =>
-    new SassBuilder(
-      outputStyle: options.config[outputStyleKey], 
-      includePaths: options.config[includePathsKey].cast<String>());
+Builder sassBuilder(BuilderOptions options) => new SassBuilder(
+    outputStyle: options.config[outputStyleKey],
+    includePaths: options.config[includePathsKey].cast<String>());
 
 PostProcessBuilder sassSourceCleanup(BuilderOptions options) =>
     new FileDeletingBuilder(['.scss', '.sass'],
@@ -26,7 +25,10 @@ class SassBuilder implements Builder {
   final String _outputStyle;
   final List<String> _includePaths;
 
-  SassBuilder({String outputExtension: '.css', String outputStyle, List<String> includePaths: const []})
+  SassBuilder(
+      {String outputExtension: '.css',
+      String outputStyle,
+      List<String> includePaths: const []})
       : this._outputExtension = outputExtension,
         this._outputStyle = outputStyle ?? _defaultOutputStyle.toString(),
         this._includePaths = includePaths ?? [];
