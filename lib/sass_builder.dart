@@ -40,7 +40,7 @@ class SassBuilder implements Builder {
     log.fine('compiling file: ${inputId.uri.toString()}');
     final cssOutput = await sass.compileStringAsync(
         await buildStep.readAsString(inputId),
-        syntax: _getValidSyntax(inputId.extension),
+        syntax: sass.Syntax.forPath(inputId.path),
         importers: [new BuildImporter(buildStep)],
         style: _getValidOutputStyle());
 
@@ -49,11 +49,6 @@ class SassBuilder implements Builder {
     await buildStep.writeAsString(outputId, '${cssOutput}\n');
     log.fine('wrote css file: ${outputId.path}');
   }
-
-  /// Returns a valid `Syntax` value to the `syntax` argument of
-  /// [sass.compileString] during a [build].
-  _getValidSyntax(String extension) =>
-      extension == '.scss' ? sass.Syntax.scss : sass.Syntax.sass;
 
   /// Returns a valid `OutputStyle` value to the `style` argument of
   /// [sass.compileString] during a [build].
