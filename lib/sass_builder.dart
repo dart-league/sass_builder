@@ -42,6 +42,7 @@ class SassBuilder implements Builder {
         await buildStep.readAsString(inputId),
         indented: inputId.extension == '.sass',
         importers: [new BuildImporter(buildStep)],
+        loadPaths: ['node_modules', 'web/node_modules'],
         style: _getValidOutputStyle());
 
     // Write the builder output.
