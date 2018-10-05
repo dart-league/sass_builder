@@ -98,6 +98,9 @@ To configure options for the builder see the `build_config`
 
 * `outputStyle`: Supports `expanded` or `compressed`. Defaults to `expanded` in
   dev mode, and `compressed` in release mode.
+* `includePaths`: Supports adding a list of  directories that will be searched 
+  as part of an @include directive. Note that these files must still be readable by
+  the build system, which means putting them usually in web/ or lib/.
 
 Example that compresses output in dev mode:
 
@@ -108,4 +111,16 @@ targets:
       sass_builder:
         options:
           outputStyle: compressed
+```
+
+Example that adds 'web/node_modules' to the Sass search paths
+
+```yaml
+targets:
+  $default:
+    builders:
+      sass_builder:
+        options:
+          includePaths:
+            - web/node_modules
 ```
