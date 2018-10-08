@@ -26,7 +26,7 @@ class BuildImporter extends sass.AsyncImporter {
     return new sass.ImporterResult(
       await _buildStep.readAsString(id),
       sourceMapUrl: sourceMapId.uri,
-      indented: id.extension == '.sass',
+      syntax: sass.Syntax.forPath(id.path),
     );
   }
 
