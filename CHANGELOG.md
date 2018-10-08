@@ -1,6 +1,5 @@
-## 2.1.2
+## 2.1.2-dev
 
-### Maintenance Release
 * Widen version constraints on dependencies: build and sass.
 
 ## 2.1.1
