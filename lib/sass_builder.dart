@@ -40,7 +40,7 @@ class SassBuilder implements Builder {
     log.fine('compiling file: ${inputId.uri.toString()}');
     final cssOutput = await sass.compileStringAsync(
         await buildStep.readAsString(inputId),
-        indented: inputId.extension == '.sass',
+        syntax: sass.Syntax.forPath(inputId.path),
         importers: [new BuildImporter(buildStep)],
         style: _getValidOutputStyle());
 

@@ -1,3 +1,7 @@
+## 2.1.2-dev
+
+* Widen version constraints on dependencies: build and sass.
+
 ## 2.1.1
 
 * Set max SDK version to <3.0.0
