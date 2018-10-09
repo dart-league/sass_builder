@@ -11,9 +11,9 @@ import 'package:sass/sass.dart' as sass;
 /// https://github.com/sass/dart-sass/blob/f8b2c9111c1d5a3c07c9c8c0828b92bd87c548c9/lib/src/importer/utils.dart
 class BuildImporter extends sass.AsyncImporter {
   final BuildStep _buildStep;
-  final List<String> _includePaths;
+  final String _includePath;
 
-  BuildImporter(this._buildStep, this._includePaths);
+  BuildImporter(this._buildStep, [this._includePath]);
 
   @override
   FutureOr<Uri> canonicalize(Uri url) async =>
@@ -54,23 +54,25 @@ class BuildImporter extends sass.AsyncImporter {
   /// If neither exists, returns an empty list.
   Future<List<AssetId>> _tryImport(String import) async {
     final imports = <AssetId>[];
-    final partialId = new AssetId.resolve(
-        p.url.join(p.dirname(import), '_${p.basename(import)}'),
-        from: _buildStep.inputId);
-    if (await _buildStep.canRead(partialId)) imports.add(partialId);
-    final importId = new AssetId.resolve(import, from: _buildStep.inputId);
-    if (await _buildStep.canRead(importId)) imports.add(importId);
-
-    for (var includePath in _includePaths) {
-      final partialId = new AssetId.resolve(p.url.join(
-          'asset:${_buildStep.inputId.package}/${includePath}',
+    AssetId partialId;
+    if (_includePath == null) {
+      partialId = new AssetId.resolve(
+          p.url.join(p.dirname(import), '_${p.basename(import)}'),
+          from: _buildStep.inputId);
+    } else {
+      partialId = new AssetId.resolve(p.url.join(
+          'asset:${_buildStep.inputId.package}/${_includePath}',
           p.dirname(import),
           '_${p.basename(import)}'));
-      if (await _buildStep.canRead(partialId)) imports.add(partialId);
-      final importId = new AssetId.resolve(p.url
-          .join('asset:${_buildStep.inputId.package}/${includePath}', import));
-      if (await _buildStep.canRead(importId)) imports.add(importId);
     }
+
+    if (await _buildStep.canRead(partialId)) imports.add(partialId);
+
+    final importId = _includePath == null
+        ? new AssetId.resolve(import, from: _buildStep.inputId)
+        : new AssetId.resolve(p.url.join(
+            'asset:${_buildStep.inputId.package}/${_includePath}', import));
+    if (await _buildStep.canRead(importId)) imports.add(importId);
 
     return imports;
   }

@@ -236,6 +236,59 @@ void main() {
       expect(reader.assetsRead, containsAll([primary, import]));
     });
 
+    test('uses first match in an include path list', () async {
+      var primary = makeAssetId('a|lib/syles.scss');
+      var importA = makeAssetId('a|search_path_a/module/_styles.scss');
+      var importB = makeAssetId('a|search_path_b/module/_styles.scss');
+
+      var inputs = {
+        primary: '''@import 'module/styles';''',
+        importA: '''/* no imports A */''',
+        importB: '''/* no imports B */''',
+      };
+
+      reader.cacheStringAsset(primary, inputs[primary]);
+      reader.cacheStringAsset(importA, inputs[importA]);
+      reader.cacheStringAsset(importB, inputs[importB]);
+
+      builder = SassBuilder(includePaths: ['search_path_a', 'search_path_b']);
+
+      await runBuilder(builder, inputs.keys, reader, writer, null);
+
+      expect(writer.assets.keys, equals([primary.changeExtension('.css')]));
+      expect(reader.assetsRead, containsAll([primary, importA]));
+    });
+
+    test('import from include path uses local file first', () async {
+      var primary = makeAssetId('a|lib/syles.scss');
+      var importA = makeAssetId('a|search_path_a/module/_styles.scss');
+      var importAAdded = makeAssetId('a|search_path_a/module/_added_file.scss');
+      var importB = makeAssetId('a|search_path_b/module/_my_styles.scss');
+      var importBAdded = makeAssetId('a|search_path_b/module/_added_file.scss');
+
+      var inputs = {
+        primary: '''@import 'module/my_styles';''',
+        importA: '''/* no imports A */''',
+        importAAdded: '''/* no imports A Added */''',
+        importB: '''@import 'added_file';''',
+        importBAdded: '''/* no imports B Added */''',
+      };
+
+      reader.cacheStringAsset(primary, inputs[primary]);
+      reader.cacheStringAsset(importA, inputs[importA]);
+      reader.cacheStringAsset(importAAdded, inputs[importAAdded]);
+      reader.cacheStringAsset(importB, inputs[importB]);
+      reader.cacheStringAsset(importBAdded, inputs[importBAdded]);
+
+      builder = SassBuilder(includePaths: ['search_path_a', 'search_path_b']);
+
+      await runBuilder(builder, inputs.keys, reader, writer, null);
+
+      expect(writer.assets.keys, equals([primary.changeExtension('.css')]));
+      expect(reader.assetsRead, containsAll([primary, importB, importBAdded]));
+      expect(reader.assetsRead, isNot(contains(importAAdded)));
+    });
+
     test('.sass file import parsing', () async {
       var primary = makeAssetId('a|lib/styles.sass');
       var import1 = makeAssetId('a|lib/_more_styles.sass');

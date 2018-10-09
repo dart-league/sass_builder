@@ -101,7 +101,8 @@ To configure options for the builder see the `build_config`
 * `includePaths`: Supports adding a list of directories that will be searched
   as part of an @include directive. Note that these files must still be
   readable by the build system, which means putting them usually in web/ or
-  lib/.
+  lib/. Also note that include paths are processed in order and will use the
+  first matching file or partial.
 
 Example that compresses output in dev mode:
 

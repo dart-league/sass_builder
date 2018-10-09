@@ -45,10 +45,12 @@ class SassBuilder implements Builder {
 
     // Compile the css.
     log.fine('compiling file: ${inputId.uri.toString()}');
+    final importers = [new BuildImporter(buildStep)].followedBy(_includePaths
+        .map((includePath) => new BuildImporter(buildStep, includePath)));
     final cssOutput = await sass.compileStringAsync(
         await buildStep.readAsString(inputId),
         syntax: sass.Syntax.forPath(inputId.path),
-        importers: [new BuildImporter(buildStep, _includePaths)],
+        importers: importers,
         style: _getValidOutputStyle());
 
     // Write the builder output.
