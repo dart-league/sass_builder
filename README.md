@@ -98,9 +98,10 @@ To configure options for the builder see the `build_config`
 
 * `outputStyle`: Supports `expanded` or `compressed`. Defaults to `expanded` in
   dev mode, and `compressed` in release mode.
-* `includePaths`: Supports adding a list of  directories that will be searched 
-  as part of an @include directive. Note that these files must still be readable by
-  the build system, which means putting them usually in web/ or lib/.
+* `includePaths`: Supports adding a list of directories that will be searched
+  as part of an @include directive. Note that these files must still be
+  readable by the build system, which means putting them usually in web/ or
+  lib/.
 
 Example that compresses output in dev mode:
 
