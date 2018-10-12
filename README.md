@@ -26,9 +26,9 @@ dependencies:
     # update to the latest version
     bootstrap_sass: any
 dev_dependencies:
-    # update to the latest version
-    sass_builder: ^2.0.0
-    build_runner: ^0.8.8
+    # update to the latest versions
+    sass_builder: ^2.1.2
+    build_runner: ^1.0.0
 ```
 
 2\. Create `web/main.scss` containing the following code:

@@ -1,6 +1,9 @@
-## 2.1.2-dev
+## 2.1.2
+
+### Maintenance Release
 
 * Widen version constraints on dependencies: build and sass.
+* Remove use of the deprecated `indented` parameter when compiling with sass.
 
 ## 2.1.1
 
