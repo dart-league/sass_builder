@@ -1,3 +1,7 @@
+## 2.1.3
+
+* Widen version constrain on `build_config`.
+
 ## 2.1.2
 
 ### Maintenance Release
