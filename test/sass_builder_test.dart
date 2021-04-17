@@ -18,9 +18,9 @@ void main() {
   /// These tests do not verify any output as that is determined by the Sass
   /// implementation.
   group('build IO tests', () {
-    SassBuilder builder;
-    InMemoryAssetWriter writer;
-    InMemoryAssetReader reader;
+    late SassBuilder builder;
+    late InMemoryAssetWriter writer;
+    late InMemoryAssetReader reader;
 
     setUp(() {
       builder = new SassBuilder();
@@ -34,7 +34,7 @@ void main() {
         primary: '/* no imports */',
       };
 
-      reader.cacheStringAsset(primary, inputs[primary]);
+      reader.cacheStringAsset(primary, inputs[primary]!);
 
       await runBuilder(builder, inputs.keys, reader, writer, null);
 
@@ -50,8 +50,8 @@ void main() {
         import: '''/* no imports */''',
       };
 
-      reader.cacheStringAsset(primary, inputs[primary]);
-      reader.cacheStringAsset(import, inputs[import]);
+      reader.cacheStringAsset(primary, inputs[primary]!);
+      reader.cacheStringAsset(import, inputs[import]!);
 
       await runBuilder(builder, inputs.keys, reader, writer, null);
 
@@ -67,8 +67,8 @@ void main() {
         import: '''/* no imports */''',
       };
 
-      reader.cacheStringAsset(primary, inputs[primary]);
-      reader.cacheStringAsset(import, inputs[import]);
+      reader.cacheStringAsset(primary, inputs[primary]!);
+      reader.cacheStringAsset(import, inputs[import]!);
 
       await runBuilder(builder, inputs.keys, reader, writer, null);
 
@@ -84,8 +84,8 @@ void main() {
         import: '''/* no imports */''',
       };
 
-      reader.cacheStringAsset(primary, inputs[primary]);
-      reader.cacheStringAsset(import, inputs[import]);
+      reader.cacheStringAsset(primary, inputs[primary]!);
+      reader.cacheStringAsset(import, inputs[import]!);
 
       await runBuilder(builder, inputs.keys, reader, writer, null);
 
@@ -106,8 +106,8 @@ void main() {
         import: '''/* no imports */''',
       };
 
-      reader.cacheStringAsset(primary, inputs[primary]);
-      reader.cacheStringAsset(import, inputs[import]);
+      reader.cacheStringAsset(primary, inputs[primary]!);
+      reader.cacheStringAsset(import, inputs[import]!);
 
       await runBuilder(builder, inputs.keys, reader, writer, null);
 
@@ -126,9 +126,9 @@ void main() {
         import2: '''/* no imports */''',
       };
 
-      reader.cacheStringAsset(primary, inputs[primary]);
-      reader.cacheStringAsset(import1, inputs[import1]);
-      reader.cacheStringAsset(import2, inputs[import2]);
+      reader.cacheStringAsset(primary, inputs[primary]!);
+      reader.cacheStringAsset(import1, inputs[import1]!);
+      reader.cacheStringAsset(import2, inputs[import2]!);
 
       await runBuilder(builder, inputs.keys, reader, writer, null);
 
@@ -152,9 +152,9 @@ void main() {
         import2: '''/* no imports */''',
       };
 
-      reader.cacheStringAsset(primary, inputs[primary]);
-      reader.cacheStringAsset(import1, inputs[import1]);
-      reader.cacheStringAsset(import2, inputs[import2]);
+      reader.cacheStringAsset(primary, inputs[primary]!);
+      reader.cacheStringAsset(import1, inputs[import1]!);
+      reader.cacheStringAsset(import2, inputs[import2]!);
 
       await runBuilder(builder, inputs.keys, reader, writer, null);
 
@@ -177,9 +177,9 @@ void main() {
         import2: '''/* no imports */''',
       };
 
-      reader.cacheStringAsset(primary, inputs[primary]);
-      reader.cacheStringAsset(import1, inputs[import1]);
-      reader.cacheStringAsset(import2, inputs[import2]);
+      reader.cacheStringAsset(primary, inputs[primary]!);
+      reader.cacheStringAsset(import1, inputs[import1]!);
+      reader.cacheStringAsset(import2, inputs[import2]!);
 
       await runBuilder(builder, inputs.keys, reader, writer, null);
 
@@ -203,9 +203,9 @@ void main() {
         import2: '''/* no imports */''',
       };
 
-      reader.cacheStringAsset(primary, inputs[primary]);
-      reader.cacheStringAsset(import1, inputs[import1]);
-      reader.cacheStringAsset(import2, inputs[import2]);
+      reader.cacheStringAsset(primary, inputs[primary]!);
+      reader.cacheStringAsset(import1, inputs[import1]!);
+      reader.cacheStringAsset(import2, inputs[import2]!);
 
       await runBuilder(builder, inputs.keys, reader, writer, null);
 
@@ -224,9 +224,9 @@ void main() {
         import2: '''/* no imports */''',
       };
 
-      reader.cacheStringAsset(primary, inputs[primary]);
-      reader.cacheStringAsset(import1, inputs[import1]);
-      reader.cacheStringAsset(import2, inputs[import2]);
+      reader.cacheStringAsset(primary, inputs[primary]!);
+      reader.cacheStringAsset(import1, inputs[import1]!);
+      reader.cacheStringAsset(import2, inputs[import2]!);
 
       await runBuilder(builder, inputs.keys, reader, writer, null);
 
@@ -245,9 +245,9 @@ void main() {
         import2: '''/* no imports */''',
       };
 
-      reader.cacheStringAsset(primary, inputs[primary]);
-      reader.cacheStringAsset(import1, inputs[import1]);
-      reader.cacheStringAsset(import2, inputs[import2]);
+      reader.cacheStringAsset(primary, inputs[primary]!);
+      reader.cacheStringAsset(import1, inputs[import1]!);
+      reader.cacheStringAsset(import2, inputs[import2]!);
 
       await runBuilder(builder, [primary], reader, writer, null);
 

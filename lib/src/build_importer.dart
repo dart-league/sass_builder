@@ -15,14 +15,14 @@ class BuildImporter extends sass.AsyncImporter {
   BuildImporter(this._buildStep);
 
   @override
-  FutureOr<Uri> canonicalize(Uri url) async =>
+  Future<Uri?> canonicalize(Uri url) async =>
       (await _resolveImport(url.toString()))?.uri;
 
   @override
-  FutureOr<sass.ImporterResult> load(Uri url) async {
-    final id = new AssetId.resolve(url.toString(), from: _buildStep.inputId);
+  Future<sass.ImporterResult> load(Uri url) async {
+    final id = AssetId.resolve(url, from: _buildStep.inputId);
     final sourceMapId = id.addExtension('.map');
-    return new sass.ImporterResult(
+    return sass.ImporterResult(
       await _buildStep.readAsString(id),
       sourceMapUrl: sourceMapId.uri,
       syntax: sass.Syntax.forPath(id.path),
@@ -33,14 +33,14 @@ class BuildImporter extends sass.AsyncImporter {
   ///
   /// This tries to fill in extensions and partial prefixes and check if a
   /// directory default. If no file can be found, it returns `null`.
-  Future<AssetId> _resolveImport(String import) async {
+  Future<AssetId?> _resolveImport(String import) async {
     final extension = p.extension(import);
     if (extension == '.sass' || extension == '.scss') {
       return _exactlyOne(await _tryImport(import));
     }
 
     return _exactlyOne(await _tryImportWithExtensions(import)) ??
-        _tryImportAsDirectory(import);
+        await _tryImportAsDirectory(import);
   }
 
   /// Like [_tryImport], but checks both `.sass` and `.scss` extensions.
@@ -53,11 +53,12 @@ class BuildImporter extends sass.AsyncImporter {
   /// If neither exists, returns an empty list.
   Future<List<AssetId>> _tryImport(String import) async {
     final imports = <AssetId>[];
-    final partialId = new AssetId.resolve(
-        p.url.join(p.dirname(import), '_${p.basename(import)}'),
+    final partialId = AssetId.resolve(
+        Uri.parse(p.url.join(p.dirname(import), '_${p.basename(import)}')),
         from: _buildStep.inputId);
     if (await _buildStep.canRead(partialId)) imports.add(partialId);
-    final importId = new AssetId.resolve(import, from: _buildStep.inputId);
+    final importId =
+        AssetId.resolve(Uri.parse(import), from: _buildStep.inputId);
     if (await _buildStep.canRead(importId)) imports.add(importId);
     return imports;
   }
@@ -66,14 +67,14 @@ class BuildImporter extends sass.AsyncImporter {
   /// and the index file exists.
   ///
   /// Otherwise, returns `null`.
-  Future<AssetId> _tryImportAsDirectory(String import) async =>
+  Future<AssetId?> _tryImportAsDirectory(String import) async =>
       _exactlyOne(await _tryImportWithExtensions(p.url.join(import, 'index')));
 
   /// If [imports] contains exactly one import [AssetId], returns that import.
   ///
   /// If it contains no assets, returns `null`. If it contains more than one,
   /// throws an exception.
-  AssetId _exactlyOne(List<AssetId> imports) {
+  AssetId? _exactlyOne(List<AssetId> imports) {
     if (imports.isEmpty) return null;
     if (imports.length == 1) return imports.first;
 

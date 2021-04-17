@@ -13,7 +13,7 @@ Builder sassBuilder(BuilderOptions options) =>
 
 PostProcessBuilder sassSourceCleanup(BuilderOptions options) =>
     new FileDeletingBuilder(['.scss', '.sass'],
-        isEnabled: (options.config['enabled'] as bool) ?? false);
+        isEnabled: (options.config['enabled'] as bool?) ?? false);
 
 /// A `Builder` to compile `.css` files from `.scss` or `.sass` source using
 /// the dart implementation of Sass.
@@ -22,7 +22,7 @@ class SassBuilder implements Builder {
   final String _outputExtension;
   final String _outputStyle;
 
-  SassBuilder({String outputExtension: '.css', String outputStyle})
+  SassBuilder({String outputExtension: '.css', String? outputStyle})
       : this._outputExtension = outputExtension,
         this._outputStyle = outputStyle ?? _defaultOutputStyle.toString();
 
