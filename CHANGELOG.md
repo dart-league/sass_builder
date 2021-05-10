@@ -1,3 +1,8 @@
+## 2.1.4
+
+- Support latest versions of all dependencies
+- Migrate implementation to null safety
+
 ## 2.1.3
 
 * Widen version constrain on `build_config`.

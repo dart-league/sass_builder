@@ -18,14 +18,14 @@ void main() {
   /// These tests do not verify any output as that is determined by the Sass
   /// implementation.
   group('build IO tests', () {
-    SassBuilder builder;
-    InMemoryAssetWriter writer;
-    InMemoryAssetReader reader;
+    late SassBuilder builder;
+    late InMemoryAssetWriter writer;
+    late InMemoryAssetReader reader;
 
     setUp(() {
-      builder = new SassBuilder();
-      reader = new InMemoryAssetReader();
-      writer = new InMemoryAssetWriter();
+      builder = SassBuilder();
+      reader = InMemoryAssetReader();
+      writer = InMemoryAssetWriter();
     });
 
     test('no imports, one read and one write', () async {
@@ -33,8 +33,7 @@ void main() {
       var inputs = {
         primary: '/* no imports */',
       };
-
-      reader.cacheStringAsset(primary, inputs[primary]);
+      reader.cacheAll(inputs);
 
       await runBuilder(builder, inputs.keys, reader, writer, null);
 
@@ -49,9 +48,7 @@ void main() {
         primary: '''@import '_more_styles.scss';''',
         import: '''/* no imports */''',
       };
-
-      reader.cacheStringAsset(primary, inputs[primary]);
-      reader.cacheStringAsset(import, inputs[import]);
+      reader.cacheAll(inputs);
 
       await runBuilder(builder, inputs.keys, reader, writer, null);
 
@@ -66,9 +63,7 @@ void main() {
         primary: '''@import 'more_styles';''',
         import: '''/* no imports */''',
       };
-
-      reader.cacheStringAsset(primary, inputs[primary]);
-      reader.cacheStringAsset(import, inputs[import]);
+      reader.cacheAll(inputs);
 
       await runBuilder(builder, inputs.keys, reader, writer, null);
 
@@ -83,9 +78,7 @@ void main() {
         primary: '''@import 'foo/more_styles';''',
         import: '''/* no imports */''',
       };
-
-      reader.cacheStringAsset(primary, inputs[primary]);
-      reader.cacheStringAsset(import, inputs[import]);
+      reader.cacheAll(inputs);
 
       await runBuilder(builder, inputs.keys, reader, writer, null);
 
@@ -105,9 +98,7 @@ void main() {
         primary: '''@import 'package:b/more_styles';''',
         import: '''/* no imports */''',
       };
-
-      reader.cacheStringAsset(primary, inputs[primary]);
-      reader.cacheStringAsset(import, inputs[import]);
+      reader.cacheAll(inputs);
 
       await runBuilder(builder, inputs.keys, reader, writer, null);
 
@@ -125,10 +116,7 @@ void main() {
         import1: '''/* no imports */''',
         import2: '''/* no imports */''',
       };
-
-      reader.cacheStringAsset(primary, inputs[primary]);
-      reader.cacheStringAsset(import1, inputs[import1]);
-      reader.cacheStringAsset(import2, inputs[import2]);
+      reader.cacheAll(inputs);
 
       await runBuilder(builder, inputs.keys, reader, writer, null);
 
@@ -151,10 +139,7 @@ void main() {
         import1: '''/* no imports */''',
         import2: '''/* no imports */''',
       };
-
-      reader.cacheStringAsset(primary, inputs[primary]);
-      reader.cacheStringAsset(import1, inputs[import1]);
-      reader.cacheStringAsset(import2, inputs[import2]);
+      reader.cacheAll(inputs);
 
       await runBuilder(builder, inputs.keys, reader, writer, null);
 
@@ -176,10 +161,7 @@ void main() {
         import1: '''@import 'more_styles';''',
         import2: '''/* no imports */''',
       };
-
-      reader.cacheStringAsset(primary, inputs[primary]);
-      reader.cacheStringAsset(import1, inputs[import1]);
-      reader.cacheStringAsset(import2, inputs[import2]);
+      reader.cacheAll(inputs);
 
       await runBuilder(builder, inputs.keys, reader, writer, null);
 
@@ -202,10 +184,7 @@ void main() {
         import1: '''@import even_more_styles''',
         import2: '''/* no imports */''',
       };
-
-      reader.cacheStringAsset(primary, inputs[primary]);
-      reader.cacheStringAsset(import1, inputs[import1]);
-      reader.cacheStringAsset(import2, inputs[import2]);
+      reader.cacheAll(inputs);
 
       await runBuilder(builder, inputs.keys, reader, writer, null);
 
@@ -223,10 +202,7 @@ void main() {
         import1: '''@import "even_more_styles"''',
         import2: '''/* no imports */''',
       };
-
-      reader.cacheStringAsset(primary, inputs[primary]);
-      reader.cacheStringAsset(import1, inputs[import1]);
-      reader.cacheStringAsset(import2, inputs[import2]);
+      reader.cacheAll(inputs);
 
       await runBuilder(builder, inputs.keys, reader, writer, null);
 
@@ -244,10 +220,7 @@ void main() {
         import1: '''/* no imports */''',
         import2: '''/* no imports */''',
       };
-
-      reader.cacheStringAsset(primary, inputs[primary]);
-      reader.cacheStringAsset(import1, inputs[import1]);
-      reader.cacheStringAsset(import2, inputs[import2]);
+      reader.cacheAll(inputs);
 
       await runBuilder(builder, [primary], reader, writer, null);
 
@@ -256,4 +229,10 @@ void main() {
       expect(reader.assetsRead, containsAll([primary, import1, import2]));
     });
   });
+}
+
+extension on InMemoryAssetReader {
+  void cacheAll(Map<AssetId, String> contents) {
+    contents.forEach(cacheStringAsset);
+  }
 }
