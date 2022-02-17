@@ -228,6 +228,27 @@ void main() {
           unorderedEquals([primary.changeExtension('.css')]));
       expect(reader.assetsRead, containsAll([primary, import1, import2]));
     });
+
+    test('supports @use syntax for modular imports', () async {
+      var primary = makeAssetId('a|lib/styles.scss');
+      var import1 = makeAssetId('b|lib/more_styles.sass');
+      var import2 = makeAssetId('a|lib/_more_styles.sass');
+      var inputs = {
+        primary: '''
+            @use 'package:b/more_styles' as a;
+            @use 'more_styles' as b;
+          ''',
+        import1: '''/* no imports */''',
+        import2: '''/* no imports */''',
+      };
+      reader.cacheAll(inputs);
+
+      await runBuilder(builder, [primary], reader, writer, null);
+
+      expect(writer.assets.keys,
+          unorderedEquals([primary.changeExtension('.css')]));
+      expect(reader.assetsRead, containsAll([primary, import1, import2]));
+    });
   });
 }
 
