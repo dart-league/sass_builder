@@ -1,3 +1,8 @@
+## 2.2.0-dev
+
+- Emit source maps for generated css. This option is configurable and only
+  enabled for development builds by default.
+
 ## 2.1.4
 
 - Support latest versions of all dependencies

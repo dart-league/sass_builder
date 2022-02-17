@@ -89,6 +89,8 @@ To configure options for the builder see the `build_config`
 
 * `outputStyle`: Supports `expanded` or `compressed`. Defaults to `expanded` in
   dev mode, and `compressed` in release mode.
+* `sourceMaps`: Whether to emit source maps for compiled css. Defaults to
+  `true` in development mode and to `false` in release mode.
 
 Example that compresses output in dev mode:
 

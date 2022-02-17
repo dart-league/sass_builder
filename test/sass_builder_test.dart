@@ -1,6 +1,10 @@
+import 'dart:convert';
+
 import 'package:build/build.dart';
 import 'package:build_test/build_test.dart';
 import 'package:sass_builder/sass_builder.dart';
+import 'package:source_maps/source_maps.dart';
+import 'package:source_span/source_span.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -249,6 +253,38 @@ void main() {
           unorderedEquals([primary.changeExtension('.css')]));
       expect(reader.assetsRead, containsAll([primary, import1, import2]));
     });
+  });
+
+  test('can generate source maps', () async {
+    final writer = InMemoryAssetWriter();
+
+    await testBuilder(
+      SassBuilder(generateSourceMaps: true),
+      {
+        'a|web/styles.scss': '''
+          @use 'package:b/more_styles';
+
+          .foo { color: blue; }
+        ''',
+        'b|lib/more_styles.scss': '''
+          .bar { color: red; }
+        ''',
+      },
+      writer: writer,
+    );
+
+    final generatedCss =
+        utf8.decode(writer.assets[makeAssetId('a|web/styles.css')]!);
+    expect(generatedCss, endsWith('/*# sourceMappingURL=styles.css.map */\n'));
+
+    final sourceMaps = SingleMapping.fromJson(json
+        .fuse(utf8)
+        .decode(writer.assets[makeAssetId('a|web/styles.css.map')]!) as Map);
+    final sources = sourceMaps.urls;
+
+    expect(sources, hasLength(2));
+    expect(sources, contains('styles.scss'));
+    expect(sources, contains('packages/b/more_styles.scss'));
   });
 }
 
