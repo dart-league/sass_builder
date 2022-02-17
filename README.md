@@ -8,41 +8,32 @@ of [sass][2].
 [1]: https://github.com/dart-lang/build
 [2]: https://github.com/sass/dart-sass
 
-## Attention: Transformer has been removed in v2.0.0.
-
-> The transformer provided by this package has been removed. The `pub build` and
-> `pub serve` commands have been replaced by `build_runner` in version
-> 2.0.0-dev.51.0 of the Dart SDK.
->
-> * [Announcement](https://groups.google.com/a/dartlang.org/forum/#!topic/announce/R4kV3us0Sm8)
-> * [Migration Guide](https://webdev-dartlang-org-dev.firebaseapp.com/dart-2#tools)
-
 ## Usage
 
 1\. Create a `pubspec.yaml` file containing the following code:
 
 ```yaml
 dependencies:
-    # update to the latest version
-    bootstrap_sass: any
+  # (optional) depend on the latest version of packages providing sass sources
+  bootstrap_sass: any
 dev_dependencies:
-    # update to the latest versions
-    sass_builder: ^2.1.2
-    build_runner: ^1.0.0
+  # update to the latest versions
+  sass_builder: ^2.1.2
+  build_runner: ^2.1.7
 ```
 
 2\. Create `web/main.scss` containing the following code:
 
 ```scss
-@import "sub";
-@import "package:bootstrap_sass/scss/variables";
+@use "sub";
+@use "package:bootstrap_sass/scss/variables" as bootstrap;
 
 .a {
   color: blue;
 }
 
 .c {
-  color: $body-color;
+  color: bootstrap.$body-color;
 }
 
 ```
@@ -74,7 +65,7 @@ dev_dependencies:
 </html>
 ```
 
-5\. Run `pub run build_runner serve` and then go to `localhost:8080` with a browser
+5\. Run `dart run build_runner serve` and then go to `localhost:8080` with a browser
  and check if the file `web/main.css` was generated containing:
 
 ```css

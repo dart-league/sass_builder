@@ -78,7 +78,7 @@ class BuildImporter extends sass.AsyncImporter {
     if (imports.isEmpty) return null;
     if (imports.length == 1) return imports.first;
 
-    throw new FormatException('It is not clear which file to import. Found:\n' +
+    throw FormatException('It is not clear which file to import. Found:\n' +
         imports.map((import) => '  ${p.prettyUri(import.uri)}').join('\n'));
   }
 }

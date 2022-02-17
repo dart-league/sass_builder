@@ -9,10 +9,10 @@ import 'src/build_importer.dart';
 final outputStyleKey = 'outputStyle';
 
 Builder sassBuilder(BuilderOptions options) =>
-    new SassBuilder(outputStyle: options.config[outputStyleKey]);
+    SassBuilder(outputStyle: options.config[outputStyleKey]);
 
 PostProcessBuilder sassSourceCleanup(BuilderOptions options) =>
-    new FileDeletingBuilder(['.scss', '.sass'],
+    FileDeletingBuilder(['.scss', '.sass'],
         isEnabled: (options.config['enabled'] as bool?) ?? false);
 
 /// A `Builder` to compile `.css` files from `.scss` or `.sass` source using
@@ -22,9 +22,9 @@ class SassBuilder implements Builder {
   final String _outputExtension;
   final String _outputStyle;
 
-  SassBuilder({String outputExtension: '.css', String? outputStyle})
-      : this._outputExtension = outputExtension,
-        this._outputStyle = outputStyle ?? _defaultOutputStyle.toString();
+  SassBuilder({String outputExtension = '.css', String? outputStyle})
+      : _outputExtension = outputExtension,
+        _outputStyle = outputStyle ?? _defaultOutputStyle.toString();
 
   @override
   Future build(BuildStep buildStep) async {
@@ -32,26 +32,29 @@ class SassBuilder implements Builder {
 
     if (p.basename(inputId.path).startsWith('_')) {
       // Do not produce any output for .scss partials.
-      log.fine('skipping partial file: ${inputId}');
+      log.fine('skipping partial file: $inputId');
       return;
     }
 
     // Compile the css.
     log.fine('compiling file: ${inputId.uri.toString()}');
-    final cssOutput = await sass.compileStringAsync(
-        await buildStep.readAsString(inputId),
-        syntax: sass.Syntax.forPath(inputId.path),
-        importers: [new BuildImporter(buildStep)],
-        style: _getValidOutputStyle());
+    final compileResult = await sass.compileStringToResultAsync(
+      await buildStep.readAsString(inputId),
+      syntax: sass.Syntax.forPath(inputId.path),
+      importers: [BuildImporter(buildStep)],
+      style: _getValidOutputStyle(),
+      url: inputId.uri,
+    );
+    final cssOutput = compileResult.css;
 
     // Write the builder output.
     final outputId = inputId.changeExtension(_outputExtension);
-    await buildStep.writeAsString(outputId, '${cssOutput}\n');
+    await buildStep.writeAsString(outputId, '$cssOutput\n');
     log.fine('wrote css file: ${outputId.path}');
   }
 
   /// Returns a valid `OutputStyle` value to the `style` argument of
-  /// [sass.compileString] during a [build].
+  /// [sass.compileStringToResult] during a [build].
   ///
   /// * If [_outputStyle] is not `OutputStyle.compressed` or
   /// `OutputStyle.expanded`, a warning will be logged informing the user
