@@ -11,9 +11,9 @@ builders:
     defaults:
       release_options:
         outputStyle: compressed
-        source_maps: false
+        sourceMaps: false
       dev_options:
-        source_maps: true
+        sourceMaps: true
 post_process_builders:
   sass_source_cleanup:
     import: "package:sass_builder/sass_builder.dart"

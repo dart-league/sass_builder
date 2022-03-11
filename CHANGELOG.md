@@ -1,4 +1,4 @@
-## 2.2.0-dev
+## 2.2.0
 
 - Emit source maps for generated css. This option is configurable and only
   enabled for development builds by default.

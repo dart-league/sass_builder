@@ -286,6 +286,25 @@ void main() {
     expect(sources, contains('styles.scss'));
     expect(sources, contains('packages/b/more_styles.scss'));
   });
+
+  test('does not create source maps by default', () {
+    return testBuilder(
+      sassBuilder(BuilderOptions.forRoot),
+      {
+        'a|web/styles.scss': '''
+          .foo { color: blue; }
+        ''',
+      },
+      outputs: {
+        // should be compiled to css, but without referencing a source mapping
+        // url.
+        'a|web/styles.css': predicate((List<int> bytes) {
+          return !utf8.decode(bytes).contains('sourceMappingURL');
+        }),
+        // no .css.map file should be generated.
+      },
+    );
+  });
 }
 
 extension on InMemoryAssetReader {
