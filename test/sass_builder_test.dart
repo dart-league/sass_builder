@@ -4,7 +4,6 @@ import 'package:build/build.dart';
 import 'package:build_test/build_test.dart';
 import 'package:sass_builder/sass_builder.dart';
 import 'package:source_maps/source_maps.dart';
-import 'package:source_span/source_span.dart';
 import 'package:test/test.dart';
 
 void main() {
