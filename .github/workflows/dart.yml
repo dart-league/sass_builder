@@ -1,0 +1,34 @@
+name: Dart CI
+
+on:
+  push:
+    branches: [ master, main ]
+  pull_request:
+    branches: [ master, main ]
+
+env:
+  PUB_ENVIRONMENT: bot.github
+  PUB_CACHE: ".dart_tool/pub_cache"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: dart-lang/setup-dart@v1
+
+      - name: Install dependencies
+        run: dart pub upgrade
+
+      - name: Ensure format
+        run: dart format --output=none --set-exit-if-changed .
+
+      - name: Analyze project
+        run: dart analyze --fatal-infos
+
+      - name: Run tests
+        run: dart test
+
+      - name: Ensure example builds
+        working-directory: example
+        run: dart run build_runner build
