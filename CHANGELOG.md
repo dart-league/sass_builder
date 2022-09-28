@@ -1,3 +1,7 @@
+## 2.1.5
+
+- Fix a bug reading builder options with new Sass versions.
+
 ## 2.1.4
 
 - Support latest versions of all dependencies
