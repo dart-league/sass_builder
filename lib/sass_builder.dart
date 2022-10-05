@@ -19,6 +19,8 @@ PostProcessBuilder sassSourceCleanup(BuilderOptions options) =>
 /// the dart implementation of Sass.
 class SassBuilder implements Builder {
   static final _defaultOutputStyle = sass.OutputStyle.expanded;
+  static final _outputStylesByName = sass.OutputStyle.values.asNameMap();
+
   final String _outputExtension;
   final String _outputStyle;
 
@@ -60,10 +62,10 @@ class SassBuilder implements Builder {
   /// `OutputStyle.expanded`, a warning will be logged informing the user
   /// that the [_defaultOutputStyle] will be used.
   sass.OutputStyle _getValidOutputStyle() {
-    if (_outputStyle == sass.OutputStyle.compressed.toString()) {
-      return sass.OutputStyle.compressed;
-    } else if (_outputStyle == sass.OutputStyle.expanded.toString()) {
-      return sass.OutputStyle.expanded;
+    final style = _outputStylesByName[_outputStyle];
+
+    if (style != null) {
+      return style;
     } else {
       log.warning('Unknown outputStyle provided: "$_outputStyle". '
           'Supported values are: "expanded" and "compressed". The default '
