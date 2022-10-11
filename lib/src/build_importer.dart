@@ -21,10 +21,9 @@ class BuildImporter extends sass.AsyncImporter {
   @override
   Future<sass.ImporterResult> load(Uri url) async {
     final id = AssetId.resolve(url, from: _buildStep.inputId);
-    final sourceMapId = id.addExtension('.map');
     return sass.ImporterResult(
       await _buildStep.readAsString(id),
-      sourceMapUrl: sourceMapId.uri,
+      sourceMapUrl: id.uri,
       syntax: sass.Syntax.forPath(id.path),
     );
   }

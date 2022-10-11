@@ -1,3 +1,8 @@
+## 2.2.0
+
+- Emit source maps for generated css. This option is configurable and only
+  enabled for development builds by default.
+
 ## 2.1.5
 
 - Fix a bug reading builder options with new Sass versions.
