@@ -4,10 +4,10 @@ builders:
     builder_factories: ["sassBuilder"]
     auto_apply: dependents
     build_extensions:
-      .scss: [".css"]
-      .sass: [".css"]
+      .scss: [".css", ".css.map"]
+      .sass: [".css", ".css.map"]
     applies_builders:
-      - sass_builder|sass_source_cleanup
+      - sass_builder:sass_source_cleanup
     defaults:
       release_options:
         outputStyle: compressed
