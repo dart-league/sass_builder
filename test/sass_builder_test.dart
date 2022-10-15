@@ -270,6 +270,7 @@ void main() {
         ''',
       },
       writer: writer,
+      onLog: (record) => fail('Unexpected builder log: $record'),
     );
 
     final generatedCss =
@@ -302,6 +303,26 @@ void main() {
         }),
         // no .css.map file should be generated.
       },
+      onLog: (record) => fail('Unexpected builder log: $record'),
+    );
+  });
+
+  test('warns about invalid output style option', () {
+    return testBuilder(
+      sassBuilder(BuilderOptions({'outputStyle': 'invalid'}, isRoot: true)),
+      {
+        'a|web/styles.scss': '''
+          .foo { color: blue; }
+        ''',
+      },
+      outputs: {'a|web/styles.css': anything},
+      onLog: expectAsync1((record) {
+        expect(
+            record.message,
+            'Unknown outputStyle provided: "invalid". Supported values are: '
+            '"expanded" and "compressed". The default value of "expanded" will '
+            'be used.');
+      }),
     );
   });
 }

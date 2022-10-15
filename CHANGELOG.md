@@ -1,3 +1,7 @@
+## 2.2.1
+
+- Fix a false-positive warning emitted when the default options are used.
+
 ## 2.2.0
 
 - Emit source maps for generated css. This option is configurable and only

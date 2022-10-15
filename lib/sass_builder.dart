@@ -33,7 +33,7 @@ class SassBuilder implements Builder {
     String? outputStyle,
     bool generateSourceMaps = false,
   })  : _outputExtension = outputExtension,
-        _outputStyle = outputStyle ?? _defaultOutputStyle.toString(),
+        _outputStyle = outputStyle ?? _defaultOutputStyle.name,
         _generateSourceMaps = generateSourceMaps;
 
   @override
@@ -121,7 +121,7 @@ class SassBuilder implements Builder {
     } else {
       log.warning('Unknown outputStyle provided: "$_outputStyle". '
           'Supported values are: "expanded" and "compressed". The default '
-          'value of "${_defaultOutputStyle.toString()}" will be used.');
+          'value of "${_defaultOutputStyle.name}" will be used.');
       return _defaultOutputStyle;
     }
   }
