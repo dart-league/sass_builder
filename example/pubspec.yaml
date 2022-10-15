@@ -1,5 +1,6 @@
 name: sass_builder_example
 description: Example to build .css files from .scss source.
+publish_to: none
 environment:
   sdk: '>=2.0.0 <3.0.0'
 dependencies:
