@@ -277,9 +277,10 @@ void main() {
         utf8.decode(writer.assets[makeAssetId('a|web/styles.css')]!);
     expect(generatedCss, endsWith('/*# sourceMappingURL=styles.css.map */\n'));
 
-    final sourceMaps = SingleMapping.fromJson(json
+    final decoded = json
         .fuse(utf8)
-        .decode(writer.assets[makeAssetId('a|web/styles.css.map')]!) as Map);
+        .decode(writer.assets[makeAssetId('a|web/styles.css.map')]!);
+    final sourceMaps = SingleMapping.fromJson((decoded as Map).cast());
     final sources = sourceMaps.urls;
 
     expect(sources, hasLength(2));
