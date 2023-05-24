@@ -18,7 +18,8 @@ jobs:
       - uses: dart-lang/setup-dart@v1
 
       - name: Install dependencies
-        run: dart pub upgrade
+      # We can remove --no-example once the bootstrap issue has been resolved
+        run: dart pub upgrade --no-example
 
       - name: Ensure format
         run: dart format --output=none --set-exit-if-changed .
@@ -29,6 +30,7 @@ jobs:
       - name: Run tests
         run: dart test
 
-      - name: Ensure example builds
-        working-directory: example
-        run: dart run build_runner build
+# Currently broken due to https://github.com/dart-league/bootstrap_sass/issues/12
+#      - name: Ensure example builds
+#        working-directory: example
+#        run: dart run build_runner build
