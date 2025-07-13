@@ -1,6 +1,6 @@
 # sass_builder
 
-[![Build Status](https://travis-ci.org/dart-league/sass_builder.svg?branch=master)](https://travis-ci.org/dart-league/sass_builder)
+[![Build status](https://github.com/dart-league/sass_builder/actions/workflows/dart.yml/badge.svg)](https://github.com/dart-league/sass_builder/actions/workflows/dart.yml)
 
 Transpile sass files using the [build][1] package and the dart implementation
 of [sass][2].
