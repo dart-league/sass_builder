@@ -1,3 +1,7 @@
+## 2.2.2-dev.0
+
+- Support version 3 of `package:build`.
+
 ## 2.2.1
 
 - Fix a false-positive warning emitted when the default options are used.

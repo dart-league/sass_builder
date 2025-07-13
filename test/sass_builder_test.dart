@@ -22,241 +22,249 @@ void main() {
   /// implementation.
   group('build IO tests', () {
     late SassBuilder builder;
-    late InMemoryAssetWriter writer;
-    late InMemoryAssetReader reader;
 
     setUp(() {
       builder = SassBuilder();
-      reader = InMemoryAssetReader();
-      writer = InMemoryAssetWriter();
     });
 
     test('no imports, one read and one write', () async {
-      var primary = makeAssetId('a|lib/styles.scss');
-      var inputs = {
-        primary: '/* no imports */',
-      };
-      reader.cacheAll(inputs);
+      final result = await testBuilder(builder, {
+        'a|lib/styles.scss': '/* no imports */',
+      }, outputs: {
+        'a|lib/styles.css': anything,
+      });
 
-      await runBuilder(builder, inputs.keys, reader, writer, null);
-
-      expect(writer.assets.keys, equals([primary.changeExtension('.css')]));
-      expect(reader.assetsRead, equals([primary]));
+      expect(result.readerWriter.testing.trackedExistingInputs,
+          [makeAssetId('a|lib/styles.scss')]);
     });
 
     test('one relative partial import', () async {
-      var primary = makeAssetId('a|lib/styles.scss');
-      var import = makeAssetId('a|lib/_more_styles.scss');
-      var inputs = {
-        primary: '''@import '_more_styles.scss';''',
-        import: '''/* no imports */''',
-      };
-      reader.cacheAll(inputs);
+      final results = await testBuilder(
+        builder,
+        {
+          'a|lib/styles.scss': '''@import '_more_styles.scss';''',
+          'a|lib/_more_styles.scss': '''/* no imports */''',
+        },
+        outputs: {
+          'a|lib/styles.css': anything,
+        },
+      );
 
-      await runBuilder(builder, inputs.keys, reader, writer, null);
-
-      expect(writer.assets.keys, equals([primary.changeExtension('.css')]));
-      expect(reader.assetsRead, containsAll([primary, import]));
+      expect(results.readerWriter.testing.trackedExistingInputs, [
+        makeAssetId('a|lib/_more_styles.scss'),
+        makeAssetId('a|lib/styles.scss'),
+      ]);
     });
 
     test('one relative partial import simplified name', () async {
-      var primary = makeAssetId('a|lib/styles.scss');
-      var import = makeAssetId('a|lib/_more_styles.scss');
-      var inputs = {
-        primary: '''@import 'more_styles';''',
-        import: '''/* no imports */''',
-      };
-      reader.cacheAll(inputs);
+      final results = await testBuilder(
+        builder,
+        {
+          'a|lib/styles.scss': '''@import 'more_styles';''',
+          'a|lib/_more_styles.scss': '''/* no imports */''',
+        },
+        outputs: {
+          'a|lib/styles.css': anything,
+        },
+      );
 
-      await runBuilder(builder, inputs.keys, reader, writer, null);
-
-      expect(writer.assets.keys, equals([primary.changeExtension('.css')]));
-      expect(reader.assetsRead, containsAll([primary, import]));
+      expect(results.readerWriter.testing.trackedExistingInputs, {
+        makeAssetId('a|lib/styles.scss'),
+        makeAssetId('a|lib/_more_styles.scss'),
+      });
     });
 
     test('one relative import', () async {
-      var primary = makeAssetId('a|lib/styles.scss');
-      var import = makeAssetId('a|lib/foo/more_styles.scss');
-      var inputs = {
-        primary: '''@import 'foo/more_styles';''',
-        import: '''/* no imports */''',
-      };
-      reader.cacheAll(inputs);
+      final results = await testBuilder(
+        builder,
+        {
+          'a|lib/styles.scss': '''@import 'foo/more_styles';''',
+          'a|lib/foo/more_styles.scss': '''/* no imports */''',
+        },
+        outputs: {
+          'a|lib/styles.css': anything,
+          'a|lib/foo/more_styles.css': anything,
+        },
+      );
 
-      await runBuilder(builder, inputs.keys, reader, writer, null);
-
-      expect(
-          writer.assets.keys,
-          unorderedEquals([
-            primary.changeExtension('.css'),
-            import.changeExtension('.css')
-          ]));
-      expect(reader.assetsRead, containsAll([primary, import]));
+      expect(results.readerWriter.testing.trackedExistingInputs, {
+        makeAssetId('a|lib/styles.scss'),
+        makeAssetId('a|lib/foo/more_styles.scss'),
+      });
     });
 
     test('one package import', () async {
-      var primary = makeAssetId('a|lib/styles.scss');
-      var import = makeAssetId('b|lib/_more_styles.scss');
-      var inputs = {
-        primary: '''@import 'package:b/more_styles';''',
-        import: '''/* no imports */''',
-      };
-      reader.cacheAll(inputs);
+      final results = await testBuilder(
+        builder,
+        {
+          'a|lib/styles.scss': '''@import 'package:b/more_styles';''',
+          'b|lib/_more_styles.scss': '''/* no imports */''',
+        },
+        outputs: {
+          'a|lib/styles.css': anything,
+        },
+      );
 
-      await runBuilder(builder, inputs.keys, reader, writer, null);
-
-      expect(writer.assets.keys, equals([primary.changeExtension('.css')]));
-      expect(reader.assetsRead, containsAll([primary, import]));
+      expect(results.readerWriter.testing.trackedExistingInputs, {
+        makeAssetId('a|lib/styles.scss'),
+        makeAssetId('b|lib/_more_styles.scss'),
+      });
     });
 
     test('multiple imports in one block', () async {
-      var primary = makeAssetId('a|lib/styles.scss');
-      var import1 = makeAssetId('b|lib/more_styles.scss');
-      var import2 = makeAssetId('a|lib/_more_styles.scss');
-      var inputs = {
-        primary: '''@import 'package:b/more_styles','''
-            '''        'more_styles';''',
-        import1: '''/* no imports */''',
-        import2: '''/* no imports */''',
-      };
-      reader.cacheAll(inputs);
+      final results = await testBuilder(
+        builder,
+        {
+          'a|lib/styles.scss': '''@import 'more_styles';''',
+          'b|lib/more_styles.scss': '''/* no imports */''',
+          'a|lib/_more_styles.scss': '''/* no imports */''',
+        },
+        outputs: {
+          'a|lib/styles.css': anything,
+          'b|lib/more_styles.css': anything,
+        },
+      );
 
-      await runBuilder(builder, inputs.keys, reader, writer, null);
-
-      expect(
-          writer.assets.keys,
-          unorderedEquals([
-            primary.changeExtension('.css'),
-            import1.changeExtension('.css')
-          ]));
-      expect(reader.assetsRead, containsAll([primary, import1, import2]));
+      expect(results.readerWriter.testing.trackedExistingInputs, {
+        makeAssetId('a|lib/styles.scss'),
+        makeAssetId('b|lib/more_styles.scss'),
+        makeAssetId('a|lib/_more_styles.scss'),
+      });
     });
 
     test('multiple imports in multiple blocks', () async {
-      var primary = makeAssetId('a|lib/styles.scss');
-      var import1 = makeAssetId('b|lib/more_styles.scss');
-      var import2 = makeAssetId('a|lib/_more_styles.scss');
-      var inputs = {
-        primary: '''@import 'package:b/more_styles';'''
-            '''@import 'more_styles';''',
-        import1: '''/* no imports */''',
-        import2: '''/* no imports */''',
-      };
-      reader.cacheAll(inputs);
+      final results = await testBuilder(
+        builder,
+        {
+          'a|lib/styles.scss': '''@import 'package:b/more_styles';'''
+              '''@import 'more_styles';''',
+          'b|lib/more_styles.scss': '''/* no imports */''',
+          'a|lib/_more_styles.scss': '''/* no imports */''',
+        },
+        outputs: {
+          'a|lib/styles.css': anything,
+          'b|lib/more_styles.css': anything,
+        },
+      );
 
-      await runBuilder(builder, inputs.keys, reader, writer, null);
-
-      expect(
-          writer.assets.keys,
-          unorderedEquals([
-            primary.changeExtension('.css'),
-            import1.changeExtension('.css')
-          ]));
-      expect(reader.assetsRead, containsAll([primary, import1, import2]));
+      expect(results.readerWriter.testing.trackedExistingInputs, {
+        makeAssetId('a|lib/styles.scss'),
+        makeAssetId('b|lib/more_styles.scss'),
+        makeAssetId('a|lib/_more_styles.scss'),
+      });
     });
 
     test('transitive imports', () async {
-      var primary = makeAssetId('a|lib/styles.scss');
-      var import1 = makeAssetId('b|lib/styles.scss');
-      var import2 = makeAssetId('b|lib/_more_styles.scss');
-      var inputs = {
-        primary: '''@import 'package:b/more_styles';''',
-        import1: '''@import 'more_styles';''',
-        import2: '''/* no imports */''',
-      };
-      reader.cacheAll(inputs);
+      final results = await testBuilder(
+        builder,
+        {
+          'a|lib/styles.scss': '''@import 'package:b/styles';''',
+          'b|lib/styles.scss': '''@import 'more_styles';''',
+          'b|lib/_more_styles.scss': '''/* no imports */''',
+        },
+        outputs: {
+          'a|lib/styles.css': anything,
+          'b|lib/styles.css': anything,
+        },
+      );
 
-      await runBuilder(builder, inputs.keys, reader, writer, null);
-
-      expect(
-          writer.assets.keys,
-          unorderedEquals([
-            primary.changeExtension('.css'),
-            import1.changeExtension('.css')
-          ]));
-
-      expect(reader.assetsRead, containsAll([primary, import1, import2]));
+      expect(results.readerWriter.testing.trackedExistingInputs, {
+        makeAssetId('a|lib/styles.scss'),
+        makeAssetId('b|lib/styles.scss'),
+        makeAssetId('b|lib/_more_styles.scss'),
+      });
     });
 
     test('.sass file import parsing', () async {
-      var primary = makeAssetId('a|lib/styles.sass');
-      var import1 = makeAssetId('a|lib/_more_styles.sass');
-      var import2 = makeAssetId('a|lib/_even_more_styles.sass');
-      var inputs = {
-        primary: '''@import 'more_styles', "even_more_styles.sass"''',
-        import1: '''@import even_more_styles''',
-        import2: '''/* no imports */''',
-      };
-      reader.cacheAll(inputs);
+      final results = await testBuilder(
+        builder,
+        {
+          'a|lib/styles.sass':
+              '''@import 'more_styles', "even_more_styles.sass"''',
+          'a|lib/_more_styles.sass': '''@import "even_more_styles"''',
+          'a|lib/_even_more_styles.sass': '''/* no imports */''',
+        },
+        outputs: {
+          'a|lib/styles.css': anything,
+        },
+      );
 
-      await runBuilder(builder, inputs.keys, reader, writer, null);
-
-      expect(writer.assets.keys, equals([primary.changeExtension('.css')]));
-      expect(reader.assetsRead, containsAll([primary, import1, import2]));
+      expect(results.readerWriter.testing.trackedExistingInputs, {
+        makeAssetId('a|lib/styles.sass'),
+        makeAssetId('a|lib/_more_styles.sass'),
+        makeAssetId('a|lib/_even_more_styles.sass'),
+      });
     });
 
     test('.sass file imports in other packages', () async {
-      var primary = makeAssetId('a|lib/styles.sass');
-      var import1 = makeAssetId('b|lib/_more_styles.sass');
-      var import2 = makeAssetId('b|lib/_even_more_styles.sass');
-      var inputs = {
-        primary:
-            '''@import package:b/more_styles, package:b/even_more_styles.sass''',
-        import1: '''@import "even_more_styles"''',
-        import2: '''/* no imports */''',
-      };
-      reader.cacheAll(inputs);
+      final results = await testBuilder(
+        builder,
+        {
+          'a|lib/styles.sass':
+              '''@import package:b/more_styles, package:b/even_more_styles.sass''',
+          'b|lib/_more_styles.sass': '''@import "even_more_styles"''',
+          'b|lib/_even_more_styles.sass': '''/* no imports */''',
+        },
+        outputs: {
+          'a|lib/styles.css': anything,
+        },
+      );
 
-      await runBuilder(builder, inputs.keys, reader, writer, null);
-
-      expect(writer.assets.keys, equals([primary.changeExtension('.css')]));
-      expect(reader.assetsRead, containsAll([primary, import1, import2]));
+      expect(results.readerWriter.testing.trackedExistingInputs, {
+        makeAssetId('a|lib/styles.sass'),
+        makeAssetId('b|lib/_more_styles.sass'),
+        makeAssetId('b|lib/_even_more_styles.sass'),
+      });
     });
 
     test('multiple .sass imports in multiple blocks', () async {
-      var primary = makeAssetId('a|lib/styles.sass');
-      var import1 = makeAssetId('b|lib/more_styles.sass');
-      var import2 = makeAssetId('a|lib/_more_styles.sass');
-      var inputs = {
-        primary: '''@import 'package:b/more_styles'
+      final results = await testBuilder(
+        builder,
+        {
+          'a|lib/styles.sass': '''@import 'package:b/more_styles'
 @import 'more_styles' ''',
-        import1: '''/* no imports */''',
-        import2: '''/* no imports */''',
-      };
-      reader.cacheAll(inputs);
+          'b|lib/more_styles.sass': '''/* no imports */''',
+          'a|lib/_more_styles.sass': '''/* no imports */''',
+        },
+        outputs: {
+          'a|lib/styles.css': anything,
+          'b|lib/more_styles.css': anything,
+        },
+      );
 
-      await runBuilder(builder, [primary], reader, writer, null);
-
-      expect(writer.assets.keys,
-          unorderedEquals([primary.changeExtension('.css')]));
-      expect(reader.assetsRead, containsAll([primary, import1, import2]));
+      expect(results.readerWriter.testing.trackedExistingInputs, {
+        makeAssetId('a|lib/styles.sass'),
+        makeAssetId('b|lib/more_styles.sass'),
+        makeAssetId('a|lib/_more_styles.sass'),
+      });
     });
 
     test('supports @use syntax for modular imports', () async {
-      var primary = makeAssetId('a|lib/styles.scss');
-      var import1 = makeAssetId('b|lib/more_styles.sass');
-      var import2 = makeAssetId('a|lib/_more_styles.sass');
-      var inputs = {
-        primary: '''
+      final results = await testBuilder(
+        builder,
+        {
+          'a|lib/styles.scss': '''
             @use 'package:b/more_styles' as a;
             @use 'more_styles' as b;
           ''',
-        import1: '''/* no imports */''',
-        import2: '''/* no imports */''',
-      };
-      reader.cacheAll(inputs);
+          'b|lib/more_styles.scss': '''/* no imports */''',
+          'a|lib/_more_styles.scss': '''/* no imports */''',
+        },
+        outputs: {
+          'a|lib/styles.css': anything,
+          'b|lib/more_styles.css': anything,
+        },
+      );
 
-      await runBuilder(builder, [primary], reader, writer, null);
-
-      expect(writer.assets.keys,
-          unorderedEquals([primary.changeExtension('.css')]));
-      expect(reader.assetsRead, containsAll([primary, import1, import2]));
+      expect(results.readerWriter.testing.trackedExistingInputs, {
+        makeAssetId('a|lib/styles.scss'),
+        makeAssetId('b|lib/more_styles.scss'),
+        makeAssetId('a|lib/_more_styles.scss'),
+      });
     });
   });
 
   test('can generate source maps', () async {
-    final writer = InMemoryAssetWriter();
-
     await testBuilder(
       SassBuilder(generateSourceMaps: true),
       {
@@ -265,27 +273,25 @@ void main() {
 
           .foo { color: blue; }
         ''',
-        'b|lib/more_styles.scss': '''
+        'b|lib/_more_styles.scss': '''
           .bar { color: red; }
         ''',
       },
-      writer: writer,
-      onLog: (record) => fail('Unexpected builder log: $record'),
+      outputs: {
+        'a|web/styles.css': decodedMatches(
+            endsWith('/*# sourceMappingURL=styles.css.map */\n')),
+        'a|web/styles.css.map': predicate((bytes) {
+          final decoded = json.fuse(utf8).decode(bytes as List<int>);
+          final sourceMaps = SingleMapping.fromJson((decoded as Map).cast());
+          final sources = sourceMaps.urls;
+
+          expect(sources, hasLength(2));
+          expect(sources, contains('styles.scss'));
+          expect(sources, contains('packages/b/_more_styles.scss'));
+          return true;
+        }),
+      },
     );
-
-    final generatedCss =
-        utf8.decode(writer.assets[makeAssetId('a|web/styles.css')]!);
-    expect(generatedCss, endsWith('/*# sourceMappingURL=styles.css.map */\n'));
-
-    final decoded = json
-        .fuse(utf8)
-        .decode(writer.assets[makeAssetId('a|web/styles.css.map')]!);
-    final sourceMaps = SingleMapping.fromJson((decoded as Map).cast());
-    final sources = sourceMaps.urls;
-
-    expect(sources, hasLength(2));
-    expect(sources, contains('styles.scss'));
-    expect(sources, contains('packages/b/more_styles.scss'));
   });
 
   test('does not create source maps by default', () {
@@ -304,12 +310,12 @@ void main() {
         }),
         // no .css.map file should be generated.
       },
-      onLog: (record) => fail('Unexpected builder log: $record'),
     );
   });
 
-  test('warns about invalid output style option', () {
-    return testBuilder(
+  test('warns about invalid output style option', () async {
+    final messages = <String>[];
+    await testBuilder(
       sassBuilder(BuilderOptions({'outputStyle': 'invalid'}, isRoot: true)),
       {
         'a|web/styles.scss': '''
@@ -317,19 +323,19 @@ void main() {
         ''',
       },
       outputs: {'a|web/styles.css': anything},
-      onLog: expectAsync1((record) {
-        expect(
-            record.message,
-            'Unknown outputStyle provided: "invalid". Supported values are: '
-            '"expanded" and "compressed". The default value of "expanded" will '
-            'be used.');
-      }),
+      onLog: (log) => messages.add(log.message),
+    );
+
+    expect(
+      messages,
+      anyElement(contains(
+          'Unknown outputStyle provided: "invalid". Supported values are: '
+          '"expanded" and "compressed". The default value of "expanded" will '
+          'be used.')),
     );
   });
 }
 
-extension on InMemoryAssetReader {
-  void cacheAll(Map<AssetId, String> contents) {
-    contents.forEach(cacheStringAsset);
-  }
+extension on ReaderWriterTesting {
+  Set<AssetId> get trackedExistingInputs => inputsTracked.where(exists).toSet();
 }

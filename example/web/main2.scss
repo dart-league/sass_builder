@@ -1,10 +1,10 @@
 @use "sub3";
-@use "package:bootstrap_sass/scss/bootstrap";
+@use "shared" as *;
 
 .d {
   color: blue;
 }
 
 .e {
-  color: bootstrap.$body-color;
+  color: $my-color;
 }
