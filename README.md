@@ -1,25 +1,27 @@
-# sass_builder
-
 [![Build status](https://github.com/dart-league/sass_builder/actions/workflows/dart.yml/badge.svg)](https://github.com/dart-league/sass_builder/actions/workflows/dart.yml)
 
-Transpile sass files using the [build][1] package and the dart implementation
-of [sass][2].
+`package:sass_builder` transpiles Sass files using the [build][1] package and
+the [Dart implementation][2] of [Sass][3].
 
 [1]: https://github.com/dart-lang/build
 [2]: https://github.com/sass/dart-sass
+[3]: https://sass-lang.com/dart-sass/
 
 ## Usage
 
-1\. Create a `pubspec.yaml` file containing the following code:
+1\. Add `build_runner` and `sass_builder` as dev dependencies
+    in your `pubspec.yaml` file:
 
-```yaml
-dependencies:
-  # (optional) depend on the latest version of packages providing sass sources
-  bootstrap_sass: any
-dev_dependencies:
-  # update to the latest versions
-  sass_builder: ^2.1.2
-  build_runner: ^2.1.7
+```shell
+dart pub add dev:build_runner dev:sass_builder
+```
+
+If you want to use any packages that provide source sass files,
+add them as normal pub dependencies.
+For example, if you want to use styles from `package:bootstrap_sass`:
+
+```shell
+dart pub add bootstrap_sass
 ```
 
 2\. Create `web/main.scss` containing the following code:
@@ -35,7 +37,6 @@ dev_dependencies:
 .c {
   color: bootstrap.$body-color;
 }
-
 ```
 
 3\. Create `web/_sub.scss` containing the following code:
@@ -44,7 +45,6 @@ dev_dependencies:
 .b {
   color: red;
 }
-
 ```
 
 4\. Create `web/index.html` containing the following code:
@@ -87,10 +87,10 @@ dev_dependencies:
 To configure options for the builder see the `build_config`
 [README](https://github.com/dart-lang/build/blob/master/build_config/README.md).
 
-* `outputStyle`: Supports `expanded` or `compressed`. Defaults to `expanded` in
-  dev mode, and `compressed` in release mode.
-* `sourceMaps`: Whether to emit source maps for compiled css. Defaults to
-  `true` in development mode and to `false` in release mode.
+* `outputStyle`: Supports `expanded` or `compressed`.
+  Defaults to `expanded` in dev mode, and `compressed` in release mode.
+* `sourceMaps`: Whether to emit source maps for compiled CSS.
+  Defaults to `true` in development mode and to `false` in release mode.
 
 Example that compresses output in dev mode:
 
