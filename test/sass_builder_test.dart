@@ -8,12 +8,12 @@ import 'package:test/test.dart';
 
 void main() {
   /// These tests only verify which assets are read and written by the
-  /// [SassBuilder]. This is to test the behaivor of the AsyncImporter used to
+  /// [SassBuilder]. This is to test the behavior of the AsyncImporter used to
   /// handle Dart package imports and perform all file IO through the
   /// build_step.
   ///
   /// In some cases additional dependencies are created on files that do not
-  /// exists because Sass allows the user to ommit the file extensions `.scss`
+  /// exists because Sass allows the user to omit the file extensions `.scss`
   /// or `.sass`, the partial prefix `_` or the file name altogether. These
   /// tests avoid testing for those dependencies that are created when probing
   /// for imports.

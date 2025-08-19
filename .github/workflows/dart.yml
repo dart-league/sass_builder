@@ -14,12 +14,11 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v5
       - uses: dart-lang/setup-dart@v1
 
       - name: Install dependencies
-      # We can remove --no-example once the bootstrap issue has been resolved
-        run: dart pub upgrade --no-example
+        run: dart pub upgrade
 
       - name: Ensure format
         run: dart format --output=none --set-exit-if-changed .
@@ -30,7 +29,6 @@ jobs:
       - name: Run tests
         run: dart test
 
-# Currently broken due to https://github.com/dart-league/bootstrap_sass/issues/12
-#      - name: Ensure example builds
-#        working-directory: example
-#        run: dart run build_runner build
+      - name: Ensure example builds
+        working-directory: example
+        run: dart run build_runner build

@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:build/build.dart';
 import 'package:path/path.dart' as p;
 import 'package:sass/sass.dart' as sass;
@@ -43,23 +41,29 @@ class BuildImporter extends sass.AsyncImporter {
   }
 
   /// Like [_tryImport], but checks both `.sass` and `.scss` extensions.
-  Future<List<AssetId>> _tryImportWithExtensions(String import) async =>
-      await _tryImport('$import.sass') + await _tryImport('$import.scss');
+  Future<List<AssetId>> _tryImportWithExtensions(String import) async => [
+        ...await _tryImport('$import.sass'),
+        ...await _tryImport('$import.scss')
+      ];
 
   /// Returns the [AssetId] for [import] and/or the partial with the same name,
   /// if either or both exists.
   ///
   /// If neither exists, returns an empty list.
   Future<List<AssetId>> _tryImport(String import) async {
-    final imports = <AssetId>[];
     final partialId = AssetId.resolve(
-        Uri.parse(p.url.join(p.dirname(import), '_${p.basename(import)}')),
-        from: _buildStep.inputId);
-    if (await _buildStep.canRead(partialId)) imports.add(partialId);
-    final importId =
-        AssetId.resolve(Uri.parse(import), from: _buildStep.inputId);
-    if (await _buildStep.canRead(importId)) imports.add(importId);
-    return imports;
+      Uri.parse(p.url.join(p.dirname(import), '_${p.basename(import)}')),
+      from: _buildStep.inputId,
+    );
+    final importId = AssetId.resolve(
+      Uri.parse(import),
+      from: _buildStep.inputId,
+    );
+
+    return [
+      if (await _buildStep.canRead(partialId)) partialId,
+      if (await _buildStep.canRead(importId)) importId,
+    ];
   }
 
   /// Returns the resolved index file for [import] if [import] is a directory
@@ -73,7 +77,7 @@ class BuildImporter extends sass.AsyncImporter {
   ///
   /// If it contains no assets, returns `null`. If it contains more than one,
   /// throws an exception.
-  AssetId? _exactlyOne(List<AssetId> imports) {
+  static AssetId? _exactlyOne(List<AssetId> imports) {
     if (imports.isEmpty) return null;
     if (imports.length == 1) return imports.first;
 

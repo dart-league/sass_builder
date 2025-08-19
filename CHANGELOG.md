@@ -1,6 +1,8 @@
-## 2.2.2-dev.0
+## 2.3.0
 
 - Support version 3 of `package:build`.
+- Require `package:sass` version 1.74.0 or later.
+- Require Dart 3.6 or later.
 
 ## 2.2.1
 

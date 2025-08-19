@@ -4,8 +4,8 @@ will be deleted.__
 
 Example:
 
-```
-$ dart run build_runner build --output web:out
+```shell
+dart run build_runner build --output web:out
 ```
 
 The output will be located in the directory `out/`.
