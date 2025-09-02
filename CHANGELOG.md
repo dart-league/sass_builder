@@ -1,3 +1,7 @@
+## 2.3.1
+
+- Support version 4 of `pacakge:build`.
+
 ## 2.3.0
 
 - Support version 3 of `package:build`.
